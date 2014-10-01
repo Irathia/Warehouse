@@ -1,9 +1,10 @@
+package Warehouse;
 
 public class Point {
-	private double x;
-	private double y;
-	
-	public Point() {
+    private double x;
+    private double y;
+    
+    public Point() {
         x = 0;
         y = 0;
     }
@@ -14,30 +15,30 @@ public class Point {
     }
     
     public void setX(double x) {
-    	this.x = x;
+        this.x = x;
     }
     
     public void setY(double y) {
-    	this.y = y;
+        this.y = y;
     }
     
     public double getX() {
-    	return x;
+        return x;
     }
     
     public double getY() {
-    	return y;
+        return y;
     }
     
     public String toString() {
         return "(" + this.x + ";" + this.y + ")";
     }
     
-	public boolean isLocatedHigherThan(Point p) {
-		return this.getY() >= p.getY();
-	}
-	
-	public boolean isLocatedLowerThan(Point p) {
-		return this.getY() <= p.getY(); 
-	}
+    public boolean isLocatedHigherThan(Point p) {
+        return this.getY() >= p.getY();
+    }
+    
+    public boolean isLocatedLowerThan(Point p) {
+        return this.getY() <= p.getY(); 
+    }
 }

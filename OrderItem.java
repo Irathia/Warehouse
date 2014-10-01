@@ -1,6 +1,6 @@
 package Warehouse;
 
-public class OrderItem {
+public class OrderItem implements Comparable<OrderItem>{
 	
 	private  int index;//index of shelf
 	private  int rigidity;
@@ -38,5 +38,13 @@ public class OrderItem {
     
     public void setVolume(double volume){
     	this.volume = volume;
+    }
+
+    @Override
+    public int compareTo(OrderItem o) {
+        if (this.rigidity != o.rigidity) {
+            return o.rigidity - this.rigidity;
+        }
+        return this.index - o.index;
     }
 }
