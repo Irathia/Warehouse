@@ -5,47 +5,40 @@ import java.util.Vector;
 
 public class Task {
 	
-	Vector <String> items; // is it sorted for pick up?
-	int startPoint, finishPoint; // is it path?
-	Time executionTime;
+	private Vector <OrderItem> items;
+	private int finish; 
+	private Time executionTime;
 	
-	Task()
-	{
-		
+	Task(){
+		this.executionTime = null;
+		items = null;
 	};
 	
-	Task(Time executionTime)
-	{
-		this.executionTime = executionTime;
-	};
-	
-	public final Time getExecutionTime()
-	{
+	public final Time getExecutionTime(){
 		return executionTime;
 	};
 	
-	public final int getStartPoint()
-	{
-		return startPoint;
+	public final int getFinish(){
+		return finish;
 	};
 	
-	public final int getFinishPoint()
-	{
-		return finishPoint;
-	};
-	
-	public final String getItem(int index)
-	{
+	public final OrderItem getItem(int index){
 		return items.get(index);
 	};
 	
-	public void addItem(String value)
-	{
+	public void addItem(OrderItem value){
 		items.add(value);
 	};
 	
-	public void clearAll()
-	{
+	public void clearAll(){
 		items.clear();
 	};
+	
+	public void setFinish(int finish){
+		this.finish = finish;
+	}
+	
+	public void calculateExecutionTime(){
+		//how?
+	}
 }

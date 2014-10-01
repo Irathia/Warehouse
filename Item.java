@@ -4,8 +4,8 @@ package Warehouse;
  * Created by Irina on 28.09.2014.
  */
 public class Item {
-    long index;
-    int rigidity;
+	private long index;
+	private int rigidity;
 
     Item(){
 

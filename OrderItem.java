@@ -1,24 +1,22 @@
 package Warehouse;
 
-import java.util.Vector;
-
 public class OrderItem {
 	
-	Vector <Integer> index;//index of shelf
-	int rigidity;
-	double volume;
+	private  int index;//index of shelf
+	private  int rigidity;
+	private  double volume;
 	
 	OrderItem(){
 		
 	};
 	
-	OrderItem(Vector <Integer> index, int rigidity, double volume){
+	OrderItem(int index, int rigidity, double volume){
 		this.index = index;
 		this.rigidity = rigidity;
 		this.volume = volume;
 	}
 	
-	public final Vector <Integer> getIndex(){
+	public final int getIndex(){
         return index;
     }
 
@@ -30,7 +28,7 @@ public class OrderItem {
     	return volume;
     }
 
-    public void setIndex(Vector <Integer> index){
+    public void setIndex(int index){
         this.index = index;
     }
 

@@ -12,12 +12,13 @@ import java.util.Vector;
 
 public class Orders {
 	
-	Vector <Order> orders;
-	Items items;
-	Vector <Task> tasks;
+	private Vector <Order> orders;
+	private Items items;
+	private Vector <Task> tasks;
 	
-	Orders(String filenameForItems, String fileForShop)
+	Orders(String filenameForItems, String fileForShop, Items items)
 	{
+		this.items = items;
 		readFromFile(filenameForItems, fileForShop);
 	};
 	
@@ -70,13 +71,13 @@ public class Orders {
                     v.clear();
                     currentShop = Long.parseLong(elements[0]);
                     //
-                    Vector <Integer> indexOfShelfs = items.getShelfsIndexes(Long.parseLong(elements[1]));
-                    OrderItem oi = new OrderItem(indexOfShelfs,items.getItems(indexOfShelfs.get(0)).getRigidity(),Double.parseDouble(elements[3]));
+                    int indexOfShelf = items.getShelfsIndex(Long.parseLong(elements[1]));
+                    OrderItem oi = new OrderItem(indexOfShelf,items.getItems(indexOfShelf).getRigidity(),Double.parseDouble(elements[3]));
                     v.add(oi);
                 }
                 else{
-                	 Vector <Integer> indexOfShelfs = items.getShelfsIndexes(Long.parseLong(elements[1]));
-                     OrderItem oi = new OrderItem(indexOfShelfs,items.getItems(indexOfShelfs.get(0)).getRigidity(),Double.parseDouble(elements[3]));
+                	 int indexOfShelf = items.getShelfsIndex(Long.parseLong(elements[1]));
+                     OrderItem oi = new OrderItem(indexOfShelf,items.getItems(indexOfShelf).getRigidity(),Double.parseDouble(elements[3]));
                      v.add(oi);
                 }
             }
@@ -89,6 +90,8 @@ public class Orders {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
+        this.sortAll();
 	}
 
     private Order getOrderByShop(long indexOfShop) {
@@ -115,5 +118,11 @@ public class Orders {
 	public final Order getOrder(int index)
 	{
 		return orders.get(index);
+	}
+	
+	private void sortAll(){
+		for(int i = 0; i < orders.size(); i++){
+			orders.get(i).sortItemsInOrder();
+		}
 	}
 }

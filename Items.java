@@ -8,8 +8,7 @@ import java.util.Vector;
 
 public class Items {
 	
-	Vector <Item> items;
-	//Vector <Double> volumes;
+	private Vector <Item> items;
 	
 	Items(String filename)
 	{
@@ -44,15 +43,14 @@ public class Items {
 		return items.get(index);
 	};
 	
-	public final Vector <Integer> getShelfsIndexes(long indexOfItem){
-		Vector <Integer> v = null;
+	public final int getShelfsIndex(long indexOfItem){
 		
 		for(int i = 0; i < items.size(); i++){
 			if (items.get(i).getIndex() == indexOfItem){
-				v.add(i);
+				return i;
 			}
 		}
-		return v;
+		return 0;
 	};
 
     public void addItem(Item item){
