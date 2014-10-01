@@ -39,7 +39,7 @@ public class Warehouse {
         return instance;
     }
     
-    private int getNearestEmptyContainer(int indexOfObject) {
+    private int findNearestEmptyContainer(int indexOfObject) {
         if (indexOfObject < 0 || indexOfObject >= numberOfObjects || emptyContainers.size() < 1) {
             return -1;
         }
@@ -53,7 +53,7 @@ public class Warehouse {
         return indexOfNearestContainer;
     }
     
-    private int getNearestNorthDelivery(int indexOfObject) {
+    private int findNearestNorthDelivery(int indexOfObject) {
         if (indexOfObject < 0 || indexOfObject >= numberOfObjects || northDelivery.size() < 1) {
             return -1;
         }
@@ -67,7 +67,7 @@ public class Warehouse {
         return indexOfNearestDelivery;
     }
     
-    private int getNearestSouthDelivery(int indexOfObject) {
+    private int findNearestSouthDelivery(int indexOfObject) {
         if (indexOfObject < 0 || indexOfObject >= numberOfObjects || southDelivery.size() < 1) {
             return -1;
         }
@@ -81,12 +81,34 @@ public class Warehouse {
         return indexOfNearestDelivery;
     }
     
+    public int getNearestEmptyContainer(int indexOfObject) {
+        int deliveryFirstIndex = pathways.getNumberOfShelves() + emptyContainers.size();
+        if (indexOfObject < numberOfObjects && indexOfObject >= deliveryFirstIndex) {
+            return nearestContainerToDelivery.get(indexOfObject - deliveryFirstIndex);
+        }
+        return findNearestEmptyContainer(indexOfObject);
+    }
+    
+    public int getNearestNorthDelivery(int indexOfObject) {
+        if (indexOfObject >= 0 && indexOfObject < pathways.getNumberOfShelves()) {
+            return nearestNorthDeliveryToShelf.get(indexOfObject);
+        }
+        return findNearestNorthDelivery(indexOfObject);
+    }
+    
+    public int getNearestSouthDelivery(int indexOfObject) {
+        if (indexOfObject >= 0 && indexOfObject < pathways.getNumberOfShelves()) {
+            return nearestSouthDeliveryToShelf.get(indexOfObject);
+        }
+        return findNearestSouthDelivery(indexOfObject);
+    }
+    
     private void recountNearestContainers() {
         nearestContainerToDelivery.clear();
         int sizeOfVector = northDelivery.size() + southDelivery.size();
         int firstDeliveryIndex = pathways.getNumberOfShelves() + emptyContainers.size();
         for (int i = 0; i < sizeOfVector; i++) {
-            nearestContainerToDelivery.add(i, getNearestEmptyContainer(firstDeliveryIndex + i));
+            nearestContainerToDelivery.add(i, findNearestEmptyContainer(firstDeliveryIndex + i));
         }
     }
     
@@ -95,8 +117,8 @@ public class Warehouse {
         nearestSouthDeliveryToShelf.clear();
         int sizeOfVector = pathways.getNumberOfShelves();
         for (int i = 0; i < sizeOfVector; i++) {
-            nearestNorthDeliveryToShelf.add(i, getNearestNorthDelivery(i));
-            nearestSouthDeliveryToShelf.add(i, getNearestSouthDelivery(i));
+            nearestNorthDeliveryToShelf.add(i, findNearestNorthDelivery(i));
+            nearestSouthDeliveryToShelf.add(i, findNearestSouthDelivery(i));
         }
     }
     
