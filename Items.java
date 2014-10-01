@@ -9,6 +9,7 @@ import java.util.Vector;
 public class Items {
 	
 	Vector <Item> items;
+	//Vector <Double> volumes;
 	
 	Items(String filename)
 	{
@@ -17,9 +18,6 @@ public class Items {
 	
 	public void readFromFile(String filename)
 	{
-		/*
-		 * here we create Map <Shelf, string>  and after that create variable goods based on map, like index in vector is point for save
-		 */
 		String line = "";
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(filename));
@@ -27,7 +25,7 @@ public class Items {
 			while((line = br.readLine()) != null){
 				String[] elements = line.split(";");
 				//shelf,index,-,-,rigidity
-				Item it = new Item(Integer.parseInt(elements[1]),Integer.parseInt(elements[4]));
+				Item it = new Item(Long.parseLong(elements[1]),Integer.parseInt(elements[4]));
 				items.add(Warehouse.getInstance().getIndexOfShelf(elements[0]),it);
 			}
 			
@@ -44,6 +42,17 @@ public class Items {
 	public final Item getItems(int index)
 	{
 		return items.get(index);
+	};
+	
+	public final Vector <Integer> getShelfsIndexes(long indexOfItem){
+		Vector <Integer> v = null;
+		
+		for(int i = 0; i < items.size(); i++){
+			if (items.get(i).getIndex() == indexOfItem){
+				v.add(i);
+			}
+		}
+		return v;
 	};
 
     public void addItem(Item item){

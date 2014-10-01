@@ -4,19 +4,22 @@ import java.sql.Time;
 import java.util.Vector;
 
 public class Order {
-	
-	Vector <String> items;
+	long indexOfShop;
+	Vector <OrderItem> items;
 	Time deadline;
-	char deliverySide;
+	Expedition deliverySide;
 	Vector <Task> tasks;
 	
-	Order()
+	Order(Time deadline, Expedition deliverySide, long indexOfShop)
 	{
-		
+        this.indexOfShop = indexOfShop;
+        this.deadline = deadline;
+        this.deliverySide = deliverySide;
 	};
 	
-	Order(Time deadline, char deliverySide)
-	{
+	Order(Vector <OrderItem>items,Time deadline, Expedition deliverySide, long indexOfShop){
+        this.indexOfShop = indexOfShop;
+        this.items = items;
 		this.deadline = deadline;
 		this.deliverySide = deliverySide;
 	};
@@ -26,45 +29,51 @@ public class Order {
 		return deadline;
 	};
 	
-	public final char getDeliverySide()
+	public final Expedition getDeliverySide()
 	{
 		return deliverySide;
 	};
+
+    public final long getIndexOfShop(){
+        return indexOfShop;
+    }
+    
+    public final Vector <Task> getTasks(){
+    	return tasks;
+    }
 	
-	public void setDeadline(Time value)
-	{
+	public void setDeadline(Time value){
 		//need check?
 		deadline = value;
 	};
 	
-	public void setDeliverySide(char value)
-	{
+	public void setDeliverySide(Expedition value)	{
 		//need check?
 		deliverySide = value;
 	};
-	
-	public void addItem(String value)
-	{
-		items.add(value);
-	};
-	
-	public final String getItem(int index)
+
+    public void setIndexOfShop(long indexOfShop){
+        this.indexOfShop = indexOfShop;
+    }
+
+    public void setItems(Vector<OrderItem> items) {
+        this.items = items;
+    }
+
+    public final OrderItem getItem(int index)
 	{
 		return items.get(index);
 	};
 	
-	public void clearAll()
-	{
+	public void clearAll() {
 		items.clear();
 	};
 	
-	public void divideOrderToTasks()
-	{
+	public void divideOrderToTasks() {
 		//how?
 	};
 	
-	public final Time executionTimeOfAllTasks()
-	{
+	public final Time executionTimeOfAllTasks()	{
 		Time t = new Time(0);
 		for (int i = 0; i < tasks.size(); i++)
 			t.setTime(tasks.get(i).getExecutionTime().getTime()+t.getTime());
