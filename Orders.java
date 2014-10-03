@@ -8,6 +8,8 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Vector;
 
 public class Orders {
@@ -16,9 +18,9 @@ public class Orders {
 	private Items items;
 	private Vector <Task> tasks;
 	
-	Orders(String filenameForItems, String fileForShop, Items items)
+	Orders(String filenameForItems, String fileForShop, String filename)
 	{
-		this.items = items;
+		this.items = new Items(filename);
 		readFromFile(filenameForItems, fileForShop);
 	};
 	
@@ -121,8 +123,38 @@ public class Orders {
 	}
 	
 	private void sortAll(){
+		Collections.sort(orders);
 		for(int i = 0; i < orders.size(); i++){
 			orders.get(i).sortItemsInOrder();
 		}
+	}
+	
+	public final int getTasksSize(){
+		return tasks.size();
+	}
+	
+	public final Vector <Task> getTask(){
+		return tasks;
+	}
+	
+	public final int getNearestTask(int indexOfpreviousTask, Time current, ArrayList <Integer> remaining){
+		int finish = tasks.get(indexOfpreviousTask).getFinish();
+		
+		int minIndex = -1;
+		double minDistance = Double.POSITIVE_INFINITY;
+		Time deadline = tasks.get(remaining.get(0)).getDeadline();
+		for (int i = 0; i < remaining.size(); i++){
+			while (tasks.get(i).getDeadline() == deadline){
+				if (Warehouse.getInstance().getRealDistance(finish, tasks.get(i).getStart()) < minDistance && tasks.get(i).getExecutionTime().getTime()+current.getTime() <= deadline.getTime()){
+					minIndex = i;
+					minDistance = Warehouse.getInstance().getRealDistance(finish, tasks.get(i).getStart());
+				}
+				i++;
+			}
+			if (minIndex != -1) { break; }
+			deadline = tasks.get(remaining.get(i)).getDeadline();
+		}
+		
+		return minIndex;
 	}
 }

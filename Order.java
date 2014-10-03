@@ -3,7 +3,7 @@ package Warehouse;
 import java.sql.Time;
 import java.util.Vector;
 
-public class Order {
+public class Order implements Comparable<Order>{
 	private long indexOfShop;
 	private Vector <OrderItem> items;
 	private Time deadline;
@@ -77,7 +77,7 @@ public class Order {
 		while ( oi.size() != 0){
 			double volume = oi.get(i).getVolume();
 			if (volumeOfAllGoodsInContainer + volume >= 100){
-				Task t = new Task();
+				Task t = new Task(deadline);
 				//add all goods before i
 				for (int j = 0; j < i; j++){
 					t.addItem(oi.get(j));
@@ -86,15 +86,17 @@ public class Order {
 				OrderItem ori = new OrderItem(oi.get(i).getIndex(),oi.get(i).getRigidity(),volumeOfEmptyContainer - volumeOfAllGoodsInContainer);
 				oi.get(i).setVolume(volume - (volumeOfEmptyContainer - volumeOfAllGoodsInContainer));
 				
+				
+				if (deliverySide == Expedition.North){
+					t.setFinish(Warehouse.getInstance().getNearestNorthDelivery(i));//get finish point
+				}else{
+					t.setFinish(Warehouse.getInstance().getNearestSouthDelivery(i));
+				}
+				
 				if (oi.get(i).getVolume() == 0){
 					i++;
 				}
 				
-				if (deliverySide == Expedition.North){
-					//t.setFinish(Warehouse.getInstance().); get finish point
-				}else{
-					//another finish point
-				}
 				
 				tasks.add(t);
 				volumeOfAllGoodsInContainer = 0;
@@ -102,6 +104,10 @@ public class Order {
 				volumeOfAllGoodsInContainer += volume;
 				i++;
 			}
+		}
+		
+		for(int j = 0; j < tasks.size(); j++){
+			tasks.get(j).calculateExecutionTime();
 		}
 	};
 	
@@ -112,31 +118,17 @@ public class Order {
 		return t;
 	};
 	
-	public void sortItemsInOrder(){
-		Vector <OrderItem> sortItems = null;
-		
-		int maxRegidity = 0;
-		int a = 0;
-		for (int i = 0; i < items.size(); i++){
-			if ((a = items.get(i).getRigidity()) > maxRegidity){
-				maxRegidity = a;
-			}
-		}
-		
-		
-		
-		while (maxRegidity > 0){
-			for (int i = 0; i < items.size(); i++){
-				if ((a = items.get(i).getRigidity()) == maxRegidity){
-					sortItems.add(items.get(i));
-				}
-			}
-			maxRegidity-=1;
-		}
-		
-		items.clear();
-		
-		items = sortItems;
+	public void sortItemsInOrder(){		
+		Warehouse.getInstance().sortIndexesForHeuristic(items);
 	}
 
+	@Override
+	public int compareTo(Order arg0) {
+		if (this.deadline.getTime() - arg0.deadline.getTime() > 0) {
+			return 1;
+		} else if (this.deadline.getTime() - arg0.deadline.getTime() < 0) {
+			return -1;
+		}
+		return 0;
+	}
 }
