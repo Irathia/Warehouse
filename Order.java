@@ -12,12 +12,16 @@ public class Order implements Comparable<Order>{
 	
 	Order(Time deadline, Expedition deliverySide, long indexOfShop)
 	{
+		items = new Vector<OrderItem>();
+		tasks = new Vector<Task>();
         this.indexOfShop = indexOfShop;
         this.deadline = deadline;
         this.deliverySide = deliverySide;
 	};
 	
 	Order(Vector <OrderItem>items,Time deadline, Expedition deliverySide, long indexOfShop){
+		this.items = new Vector<OrderItem>();
+		tasks = new Vector<Task>();
         this.indexOfShop = indexOfShop;
         this.items = items;
 		this.deadline = deadline;

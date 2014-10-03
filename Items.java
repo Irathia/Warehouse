@@ -12,6 +12,7 @@ public class Items {
 	
 	Items(String filename)
 	{
+		items = new Vector<Item>();
 		readFromFile(filename);
 	};
 	
@@ -25,7 +26,8 @@ public class Items {
 				String[] elements = line.split(";");
 				//shelf,index,-,-,rigidity
 				Item it = new Item(Long.parseLong(elements[1]),Integer.parseInt(elements[4]));
-				items.add(Warehouse.getInstance().getIndexOfShelf(elements[0]),it);
+				//items.add(Warehouse.getInstance().getIndexOfShelf(elements[0]),it);
+				items.add(it);
 			}
 			
 			br.close();

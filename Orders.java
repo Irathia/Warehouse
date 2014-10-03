@@ -20,6 +20,8 @@ public class Orders {
 	
 	Orders(String filenameForItems, String fileForShop, String filename)
 	{
+		orders = new Vector<Order>();
+		tasks = new Vector<Task>();
 		this.items = new Items(filename);
 		readFromFile(filenameForItems, fileForShop);
 	};
