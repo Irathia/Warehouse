@@ -93,7 +93,8 @@ public class Orders {
             e.printStackTrace();
         }
         
-        this.sortAll();
+        this.sortAll();//sort items orders by deadline and items by rigidity and index of shelf 
+        this.divideOrdersToTasks();
 	}
 
     private Order getOrderByShop(long indexOfShop) {
