@@ -160,4 +160,9 @@ public class Orders {
 		
 		return minIndex;
 	}
+	
+	public Time getDistanceBetweenTasks(int firstTask, int secondTask) {
+	    double result = Warehouse.getInstance().getRealDistance(tasks.get(firstTask).getFinish(), tasks.get(secondTask).getStart());
+	    return new Time(Math.round(result/tasks.get(0).v));
+	}
 }

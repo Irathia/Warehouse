@@ -6,7 +6,7 @@ public class RouteDistance {
         if (from.getY() > to.getY()) {
             return Double.POSITIVE_INFINITY;
         }
-        return Math.abs(to.getX() - from.getX()) + Math.abs(from.getY() - to.getY()); 
+        return Math.sqrt(Math.pow(to.getX() - from.getX(), 2) + Math.pow(from.getY() - to.getY(), 2));
     }
     
     private static double moveDownDistanceInOnePathway(Point from, Point to) {

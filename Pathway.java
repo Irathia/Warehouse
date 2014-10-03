@@ -1,9 +1,6 @@
 package Warehouse;
 
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
-import java.util.Vector;
 
 public class Pathway implements Comparator<OrderItem>{
     private ShelfRow leftRow;

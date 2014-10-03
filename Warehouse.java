@@ -46,7 +46,7 @@ public class Warehouse {
         int indexOfNearestContainer = pathways.getNumberOfShelves(); 
         int indexOfLastContainer = indexOfNearestContainer + emptyContainers.size() - 1;
         for(int i = indexOfNearestContainer + 1; i <= indexOfLastContainer; i++) {
-            if (distanceBetweenObjectsForHeuristic.get(indexOfObject).get(i) < distanceBetweenObjectsForHeuristic.get(indexOfObject).get(indexOfNearestContainer)) {
+            if (distanceBetweenObjects.get(indexOfObject).get(i) < distanceBetweenObjectsForHeuristic.get(indexOfObject).get(indexOfNearestContainer)) {
                 indexOfNearestContainer = i; 
             }
         }
@@ -60,7 +60,7 @@ public class Warehouse {
         int indexOfNearestDelivery = pathways.getNumberOfShelves() + emptyContainers.size(); 
         int indexOfLastNorthDelivery = indexOfNearestDelivery + northDelivery.size() - 1;
         for(int i = indexOfNearestDelivery + 1; i <= indexOfLastNorthDelivery; i++) {
-            if (distanceBetweenObjectsForHeuristic.get(indexOfObject).get(i) < distanceBetweenObjectsForHeuristic.get(indexOfObject).get(indexOfNearestDelivery)) {
+            if (distanceBetweenObjects.get(indexOfObject).get(i) < distanceBetweenObjectsForHeuristic.get(indexOfObject).get(indexOfNearestDelivery)) {
                 indexOfNearestDelivery = i;
             }
         }
@@ -74,7 +74,7 @@ public class Warehouse {
         int indexOfNearestDelivery = pathways.getNumberOfShelves() + emptyContainers.size() + northDelivery.size(); 
         int indexOfLastSouthDelivery = indexOfNearestDelivery + southDelivery.size() - 1;
         for(int i = indexOfNearestDelivery + 1; i <= indexOfLastSouthDelivery; i++) {
-            if (distanceBetweenObjectsForHeuristic.get(indexOfObject).get(i) < distanceBetweenObjectsForHeuristic.get(indexOfObject).get(indexOfNearestDelivery)) {
+            if (distanceBetweenObjects.get(indexOfObject).get(i) < distanceBetweenObjectsForHeuristic.get(indexOfObject).get(indexOfNearestDelivery)) {
                 indexOfNearestDelivery = i;
             }
         }

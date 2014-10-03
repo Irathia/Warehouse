@@ -9,7 +9,7 @@ public class Task {
 	private int finish, start; 
 	private Time executionTime;
 	private Time deadline;
-	private final double v = 3.2;
+	public final double v = 3.2;
 	
 	Task(Time deadline){
 		this.deadline = deadline;
