@@ -65,7 +65,7 @@ public class Orders {
         try {
             BufferedReader br = new BufferedReader(new FileReader(filenameForItems));
 
-            Vector <OrderItem> v = null;
+            Vector <OrderItem> v = new Vector<OrderItem>();
             while((line = br.readLine()) != null){
                 String[] elements = line.split(";");
                 //indexForShop,indecForGoods,-,volume,-
@@ -76,12 +76,12 @@ public class Orders {
                     currentShop = Long.parseLong(elements[0]);
                     //
                     int indexOfShelf = items.getShelfsIndex(Long.parseLong(elements[1]));
-                    OrderItem oi = new OrderItem(indexOfShelf,items.getItems(indexOfShelf).getRigidity(),Double.parseDouble(elements[3]));
+                    OrderItem oi = new OrderItem(indexOfShelf,items.getItems(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')));
                     v.add(oi);
                 }
                 else{
                 	 int indexOfShelf = items.getShelfsIndex(Long.parseLong(elements[1]));
-                     OrderItem oi = new OrderItem(indexOfShelf,items.getItems(indexOfShelf).getRigidity(),Double.parseDouble(elements[3]));
+                     OrderItem oi = new OrderItem(indexOfShelf,items.getItems(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')));
                      v.add(oi);
                 }
             }
