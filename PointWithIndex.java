@@ -13,6 +13,16 @@ public class PointWithIndex extends Point {
         this.index = index;
     }
     
+    public PointWithIndex(String x, String y) {
+        super(x,y);
+        this.index = -1;
+    }
+    
+    public PointWithIndex(Point p, int index) {
+        super(p.getX(), p.getY());
+        this.index = index;
+    }
+    
     public void setIndex(int index) {
         this.index = index;
     }

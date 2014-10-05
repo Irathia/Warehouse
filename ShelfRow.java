@@ -12,6 +12,7 @@ public class ShelfRow extends Rectangle {
     public ShelfRow(Side side) {
         super(0,0,0,0);
         this.SIDE = side;
+        pickupPoints = new Vector<PointWithName>();
     }
     
     public PointWithName get(int index) {
@@ -31,11 +32,10 @@ public class ShelfRow extends Rectangle {
                 this.setBottomRight(sh.getBottomRight());
             }
         }
-        // Возможны проблемы с языком
         if (sh.getName().toUpperCase().contains(EmptyContainer.NAME)) {
             return true;
         }
-        double y = (sh.getTopLeftY()-sh.getBottomRightY())/2.0;
+        double y = (sh.getTopLeftY()-sh.getBottomRightY())/2.0 + sh.getBottomRightY();
         double x;
         
         if (SIDE == Side.Left) {

@@ -12,6 +12,8 @@ public class PathwayStorage {
     
     public PathwayStorage(Direction directionOfFirstPathway) {
         this.directionOfFirstPathway = directionOfFirstPathway;    
+        numberOfShelves = 0;
+        pathways = new Vector<Pathway>();
     }
     
     public int getNumberOfShelves() {
@@ -75,6 +77,13 @@ public class PathwayStorage {
         return -1;
     }
     
+    public int getPathwayIndexByPoint(Point p) {
+        for (int i = 0; i < pathways.size(); i++) {
+            if (pathways.get(i).isLocatedInsideHorizontalBar(p)) { return i; }
+        }
+        return -1;
+    }
+    
     public int getNumberOfPathways() {
         return pathways.size();
     }
@@ -90,6 +99,22 @@ public class PathwayStorage {
             }
         }
         return currentDirection;
+    }
+    
+    public boolean add(int rowIndex, Shelf newSh) {
+        if (rowIndex < 0) { return false;}
+        int remainder = rowIndex % 2;
+        int pathwayIndex = (rowIndex - remainder) / 2;
+        while (pathwayIndex >= pathways.size()) {
+            pathways.add(new Pathway());
+        } 
+        if (remainder == 0) {
+            pathways.get(pathwayIndex).addToLeftRow(newSh);
+        }
+        else {
+            pathways.get(pathwayIndex).addToRightRow(newSh);
+        }
+        return true;
     }
     
     public void recountNumberOfShelves() {

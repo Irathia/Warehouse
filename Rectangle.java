@@ -5,10 +5,8 @@ public class Rectangle {
     private Point bottomRight;
     
     public Rectangle(double topLeftX, double topLeftY, double width, double height) {
-        this.topLeft.setX(topLeftX);
-        this.topLeft.setY(topLeftY);
-        this.bottomRight.setX(topLeftX + width);
-        this.bottomRight.setY(topLeftY - height);
+        topLeft = new Point(topLeftX, topLeftY);
+        bottomRight = new Point (topLeftX + width, topLeftY - height);
     }
     
     public void setTopLeftX(double x) {
