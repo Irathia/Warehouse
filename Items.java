@@ -21,13 +21,13 @@ public class Items {
 		String line = "";
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(filename));
-			
+            line = br.readLine();
 			while((line = br.readLine()) != null){
 				String[] elements = line.split(";");
 				//shelf,index,-,-,rigidity
 				Item it = new Item(Long.parseLong(elements[1]),Integer.parseInt(elements[4]));
-				//items.add(Warehouse.getInstance().getIndexOfShelf(elements[0]),it);
-				items.add(it);
+				items.add(Warehouse.getInstance().getIndexOfShelf(elements[0]),it);
+				//items.add(it);
 			}
 			
 			br.close();

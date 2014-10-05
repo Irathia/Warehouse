@@ -31,7 +31,7 @@ public class Orders {
         String line = "";
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileForShop));
-
+            line = br.readLine();
             while((line = br.readLine()) != null){
                 String[] elements = line.split(";");
                 //indexForShop,-,time,expedition
@@ -64,7 +64,7 @@ public class Orders {
         long currentShop = 0L;
         try {
             BufferedReader br = new BufferedReader(new FileReader(filenameForItems));
-
+            line = br.readLine();
             Vector <OrderItem> v = new Vector<OrderItem>();
             while((line = br.readLine()) != null){
                 String[] elements = line.split(";");
