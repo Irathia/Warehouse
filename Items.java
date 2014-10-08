@@ -24,9 +24,22 @@ public class Items {
             line = br.readLine();
 			while((line = br.readLine()) != null){
 				String[] elements = line.split(";");
+				if (elements.length < 5) { break; }
 				//shelf,index,-,-,rigidity
 				Item it = new Item(Long.parseLong(elements[1]),Integer.parseInt(elements[4]));
-				items.add(Warehouse.getInstance().getIndexOfShelf(elements[0]),it);
+				int index = Warehouse.getInstance().getIndexOfShelf(elements[0]);
+				if ( index == -1) {
+				    index = Warehouse.getInstance().getIndexOfShelf(elements[0]);
+	            }
+				while (index > items.size()) {
+				    items.add(new Item());
+				}
+				if (index == items.size()) {
+				    items.add(it);
+	            }
+				else {
+				    items.set(index, it);
+				}
 				//items.add(it);
 			}
 			

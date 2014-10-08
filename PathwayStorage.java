@@ -264,7 +264,7 @@ public class PathwayStorage {
     }
     
     public boolean sortIndexesForHeuristic (List<OrderItem> orderItems) {
-        if (orderItems.size() != 0) {return true;}
+        if (orderItems.size() == 0) {return true;}
         Collections.sort(orderItems);
         int currentPathwayIndex, firstElementIndex, newPathwayIndex; 
         currentPathwayIndex = getPathwayIndexByShelfIndex(orderItems.get(0).getIndex());

@@ -9,12 +9,12 @@ public class Task {
 	private int finish, start; 
 	private Time executionTime;
 	private Time deadline;
-	public final double v = 3.2;
+	public final double v = 0.89; // 3.2 km/h
 	
 	Task(Time deadline){
-		this.deadline = deadline;
-		this.executionTime = null;
-		items = null;
+		this.deadline = new Time(deadline.getTime());
+		this.executionTime = new Time(0);
+		items = new Vector<OrderItem> ();
 	};
 	
 	public final Time getExecutionTime(){
@@ -66,6 +66,6 @@ public class Task {
 		
 		l += Warehouse.getInstance().getRealDistance(items.get(items.size()-1).getIndex(),finish);
 		
-		executionTime.setTime(Math.round(l/v));
+		executionTime.setTime(Math.round(l/v) * 1000);
 	}
 }

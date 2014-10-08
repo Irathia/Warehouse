@@ -220,7 +220,7 @@ public class Warehouse {
     }
     
     public double getRealDistance(int from, int to) {
-        if (from > to) {
+        if (from < to) {
             int tmp = from;
             from = to;
             to = tmp;
@@ -362,8 +362,8 @@ public class Warehouse {
                         emptyContainers.add(p);
                     }
                     numberOfShelfsInRow[j]--;
-                    i++;
                 }
+                i++;
             }
             
             maxNumberOfShelfsInRow--;
@@ -385,14 +385,11 @@ public class Warehouse {
             if (elements.length < 2) { throw new IOException("Wrong format of Warehouse file"); }
             int numberOfRows = Integer.parseInt(elements[1]); 
             readShelfs(br, numberOfRows);
-        }
-        catch (FileNotFoundException e1) {
+        } catch (FileNotFoundException e1) {
             e1.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             try {
                 if (br != null) {
                     br.close();

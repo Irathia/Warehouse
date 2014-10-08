@@ -68,7 +68,8 @@ public class Orders {
             Vector <OrderItem> v = new Vector<OrderItem>();
             while((line = br.readLine()) != null){
                 String[] elements = line.split(";");
-                //indexForShop,indecForGoods,-,volume,-
+                //indexForShop,indexForGoods,-,volume,-
+                if (elements.length == 0) { break; }
                 if (currentShop != Long.parseLong(elements[0]) && currentShop != 0L){
                     this.getOrderByShop(currentShop).setItems(v);
                     
@@ -80,12 +81,14 @@ public class Orders {
                     v.add(oi);
                 }
                 else{
-                	 int indexOfShelf = items.getShelfsIndex(Long.parseLong(elements[1]));
-                     OrderItem oi = new OrderItem(indexOfShelf,items.getItems(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')));
-                     v.add(oi);
+                    currentShop = Long.parseLong(elements[0]);
+                    int indexOfShelf = items.getShelfsIndex(Long.parseLong(elements[1]));
+                    OrderItem oi = new OrderItem(indexOfShelf,items.getItems(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')));
+                    v.add(oi);
                 }
             }
-
+            this.getOrderByShop(currentShop).setItems(v);
+            
             br.close();
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
@@ -147,22 +150,22 @@ public class Orders {
 		double minDistance = Double.POSITIVE_INFINITY;
 		Time deadline = tasks.get(remaining.get(0)).getDeadline();
 		for (int i = 0; i < remaining.size(); i++){
-			while (tasks.get(i).getDeadline() == deadline){
-				if (Warehouse.getInstance().getRealDistance(finish, tasks.get(i).getStart()) < minDistance && tasks.get(i).getExecutionTime().getTime()+current.getTime() <= deadline.getTime()){
+			while (i < remaining.size() && tasks.get(remaining.get(i)).getDeadline().getTime() == deadline.getTime()){
+				if (Warehouse.getInstance().getRealDistance(finish, tasks.get(remaining.get(i)).getStart()) < minDistance && tasks.get(remaining.get(i)).getExecutionTime().getTime()+current.getTime() <= deadline.getTime()){
 					minIndex = i;
-					minDistance = Warehouse.getInstance().getRealDistance(finish, tasks.get(i).getStart());
+					minDistance = Warehouse.getInstance().getRealDistance(finish, tasks.get(remaining.get(i)).getStart());
 				}
 				i++;
 			}
-			if (minIndex != -1) { break; }
+			if (minIndex != -1 || i ==remaining.size()) { break; }
 			deadline = tasks.get(remaining.get(i)).getDeadline();
 		}
 		
 		return minIndex;
 	}
 	
-	public Time getDistanceBetweenTasks(int firstTask, int secondTask) {
+	public Time getTimeForMovingBetweenTasks(int firstTask, int secondTask) {
 	    double result = Warehouse.getInstance().getRealDistance(tasks.get(firstTask).getFinish(), tasks.get(secondTask).getStart());
-	    return new Time(Math.round(result/tasks.get(0).v));
+	    return new Time(Math.round(result/tasks.get(0).v) * 1000);
 	}
 }

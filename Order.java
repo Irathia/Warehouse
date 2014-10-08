@@ -9,6 +9,7 @@ public class Order implements Comparable<Order>{
 	private Time deadline;
 	private Expedition deliverySide;
 	private Vector <Task> tasks;
+	private double maximumVolumeOfTruck = 300; 
 	
 	Order(Time deadline, Expedition deliverySide, long indexOfShop)
 	{
@@ -61,7 +62,7 @@ public class Order implements Comparable<Order>{
     }
 
     public void setItems(Vector<OrderItem> items) {
-        this.items = items;
+        this.items = new Vector<OrderItem>(items);
     }
 
     public final OrderItem getItem(int index)
@@ -74,41 +75,50 @@ public class Order implements Comparable<Order>{
 	};
 	
 	public void divideOrderToTasks() {
-		Vector <OrderItem> oi = items;
-		double volumeOfEmptyContainer = 100;//need to change
+		Vector <OrderItem> oi = new Vector<OrderItem> (items);
 		double volumeOfAllGoodsInContainer = 0;
-		int i  = 0;
-		while ( oi.size() != 0){
-			double volume = oi.get(i).getVolume();
-			if (volumeOfAllGoodsInContainer + volume >= 100){
-				Task t = new Task(deadline);
-				//add all goods before i
-				for (int j = 0; j < i; j++){
-					t.addItem(oi.get(j));
-				}
-				// add i
-				OrderItem ori = new OrderItem(oi.get(i).getIndex(),oi.get(i).getRigidity(),volumeOfEmptyContainer - volumeOfAllGoodsInContainer);
-				oi.get(i).setVolume(volume - (volumeOfEmptyContainer - volumeOfAllGoodsInContainer));
-				
-				
-				if (deliverySide == Expedition.North){
-					t.setFinish(Warehouse.getInstance().getNearestNorthDelivery(i));//get finish point
-				}else{
-					t.setFinish(Warehouse.getInstance().getNearestSouthDelivery(i));
-				}
-				
-				if (oi.get(i).getVolume() == 0){
-					i++;
-				}
-				
-				
-				tasks.add(t);
-				volumeOfAllGoodsInContainer = 0;
-			}else{
-				volumeOfAllGoodsInContainer += volume;
-				i++;
-			}
+		int i = 0;
+		for (int j = 0; j < oi.size(); j++) {
+		    double volume = oi.get(j).getVolume();
+		    if (volumeOfAllGoodsInContainer + volume > maximumVolumeOfTruck) {
+		        Task t = new Task(deadline);
+		        for (;i < j;i++) {
+		            t.addItem(oi.get(i));
+		        }
+		        if (volumeOfAllGoodsInContainer != maximumVolumeOfTruck) {
+		            t.addItem(oi.get(j));
+		            oi.get(j).setVolume(volume - (maximumVolumeOfTruck - volumeOfAllGoodsInContainer));
+	            }
+		        if (deliverySide == Expedition.North) {
+                    t.setFinish(Warehouse.getInstance().getNearestNorthDelivery(i));//get finish point
+                }
+		        else {
+                    t.setFinish(Warehouse.getInstance().getNearestSouthDelivery(i));
+                }
+		        t.setStart();
+		        tasks.add(t);
+                volumeOfAllGoodsInContainer = 0;
+                i = j;
+                j--;
+            }
+		    else {
+		        volumeOfAllGoodsInContainer += volume;
+            }
 		}
+		if (i < oi.size()) {
+		    Task t = new Task(deadline);
+		    for (;i < oi.size();i++) {
+                t.addItem(oi.get(i));
+            }
+		    if (deliverySide == Expedition.North) {
+                t.setFinish(Warehouse.getInstance().getNearestNorthDelivery(i));//get finish point
+            }
+            else {
+                t.setFinish(Warehouse.getInstance().getNearestSouthDelivery(i));
+            }
+            t.setStart();
+            tasks.add(t);
+        }
 		
 		for(int j = 0; j < tasks.size(); j++){
 			tasks.get(j).calculateExecutionTime();
@@ -118,7 +128,7 @@ public class Order implements Comparable<Order>{
 	public final Time executionTimeOfAllTasks()	{
 		Time t = new Time(0);
 		for (int i = 0; i < tasks.size(); i++)
-			t.setTime(tasks.get(i).getExecutionTime().getTime()+t.getTime());
+			t.setTime(tasks.get(i).getExecutionTime().getTime()+t.getTime()* 1000);
 		return t;
 	};
 	

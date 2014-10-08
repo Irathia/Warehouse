@@ -5,7 +5,16 @@ import java.util.Vector;
 
 public class TruckTasks {
     Vector <Integer> indexOfTasks;
-    Time totalTime;
+    Time finishTime;
+    
+    public TruckTasks() {
+        indexOfTasks = new Vector<Integer>();
+        finishTime = new Time (0);
+    }
+    
+    public void setTime(Time startTime) {
+        finishTime = new Time(startTime.getTime());
+    }
     
     public int getNumberOfTasks() {
         return indexOfTasks.size();
@@ -22,15 +31,15 @@ public class TruckTasks {
         if (indexOfTasks.size() == 0) {
             return -1;
         }
-        return indexOfTasks.get(indexOfTasks.size());
+        return indexOfTasks.get(indexOfTasks.size() - 1);
     }
     
     public void addTask (int taskIndex, Time taskTime) {
         indexOfTasks.add(taskIndex);
-        totalTime.setTime(totalTime.getTime() + taskTime.getTime());
+        finishTime.setTime(finishTime.getTime() + taskTime.getTime());
     }
     
-    public Time getTotalTime () {
-        return totalTime;
+    public Time getFinishTime () {
+        return finishTime;
     }
 }
