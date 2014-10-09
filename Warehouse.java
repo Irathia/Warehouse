@@ -242,6 +242,14 @@ public class Warehouse {
         return pathways.getShelfIndex(name);
     }
     
+    public int getIndexOfFirstDelivery() {
+        return pathways.getNumberOfShelves() + emptyContainers.size();
+    }
+    
+    public int getIndexOfLastDelivery() {
+        return getIndexOfFirstDelivery() + northDelivery.size() + southDelivery.size() - 1; 
+    }
+    
     private void recountNumberOfShelvesAndObjects() {
         pathways.recountNumberOfShelves();
         numberOfObjects = pathways.getNumberOfShelves() + northDelivery.size() + southDelivery.size() + emptyContainers.size();
