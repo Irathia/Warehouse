@@ -5,6 +5,7 @@ public class OrderItem implements Comparable<OrderItem>{
 	private  int index;//index of shelf
 	private  int rigidity;
 	private  double volume;
+    private int numberOfBoxes;//i add it this
 	
 	OrderItem(){
 		
@@ -26,6 +27,10 @@ public class OrderItem implements Comparable<OrderItem>{
     
     public final double getVolume(){
     	return volume;
+    }
+
+    public final int getNumberOfBoxes(){
+        return numberOfBoxes;
     }
 
     public void setIndex(int index){

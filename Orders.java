@@ -17,6 +17,7 @@ public class Orders {
 	private Vector <Order> orders;
 	private Items items;
 	private Vector <Task> tasks;
+    private Vector <Integer> delivery;
 	
 	Orders(String filenameForItems, String fileForShop, String filename)
 	{
@@ -100,7 +101,8 @@ public class Orders {
         
         this.sortAll();//sort items orders by deadline and items by rigidity and index of shelf 
         this.divideOrdersToTasks();
-	}
+        this.numberOfDelivery();//info about delivery
+    }
 
     private Order getOrderByShop(long indexOfShop) {
         for (int i = 0; i < orders.size(); i++){
@@ -109,8 +111,12 @@ public class Orders {
             }
         }
         return null;
-    };
-	
+    }
+
+    public final Vector <Integer> getDelivery() {
+        return delivery;
+    }
+
 	public void divideOrdersToTasks(){
 		for (int i = 0; i < orders.size(); i++){
 			orders.get(i).divideOrderToTasks();
@@ -121,7 +127,7 @@ public class Orders {
 			}
 		}
 			
-	};
+	}
 	
 	public final Order getOrder(int index)
 	{
@@ -143,15 +149,15 @@ public class Orders {
 		return tasks;
 	}
 	
-	public final int getNearestTask(int indexOfpreviousTask, Time current, ArrayList <Integer> remaining){
-		int finish = tasks.get(indexOfpreviousTask).getFinish();
+	public final int getNearestTask(int indexOfPreviousTask, Time current, ArrayList <Integer> remaining){
+		int finish = tasks.get(indexOfPreviousTask).getFinish();
 		
 		int minIndex = -1;
 		double minDistance = Double.POSITIVE_INFINITY;
 		Time deadline = tasks.get(remaining.get(0)).getDeadline();
 		for (int i = 0; i < remaining.size(); i++){
 			while (i < remaining.size() && tasks.get(remaining.get(i)).getDeadline().getTime() == deadline.getTime()){
-				if (Warehouse.getInstance().getRealDistance(finish, tasks.get(remaining.get(i)).getStart()) < minDistance && tasks.get(remaining.get(i)).getExecutionTime().getTime()+current.getTime() <= deadline.getTime()){
+				if (Warehouse.getInstance().getRealDistance(finish, tasks.get(remaining.get(i)).getStart()) < minDistance && tasks.get(remaining.get(i)).getExecutionTime().getTime()+current.getTime()+getTimeForMovingBetweenTasks(indexOfPreviousTask,remaining.get(i)).getTime() <= deadline.getTime()){
 					minIndex = i;
 					minDistance = Warehouse.getInstance().getRealDistance(finish, tasks.get(remaining.get(i)).getStart());
 				}
@@ -168,4 +174,23 @@ public class Orders {
 	    double result = Warehouse.getInstance().getRealDistance(tasks.get(firstTask).getFinish(), tasks.get(secondTask).getStart());
 	    return new Time(Math.round(result/tasks.get(0).v) * 1000);
 	}
+
+    private void numberOfDelivery(){
+        //calculate information for delivery
+        int last = Warehouse.getInstance().getIndexOfLastDelivery();
+        int first = Warehouse.getInstance().getIndexOfFirstDelivery();
+        delivery = new Vector<Integer>(last-first+1);
+
+        for (int i = 0; i < delivery.size(); i++){
+            delivery.set(i,0);
+        }
+
+        for (int i = 0; i < tasks.size(); i++){
+            delivery.set(tasks.get(i).getFinish()-first,delivery.get(tasks.get(i).getFinish()-first)+1);
+        }
+    }
+
+    public void replenishment(){
+        //we write info straight into logs
+    }
 }
