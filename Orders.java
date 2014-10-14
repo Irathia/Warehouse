@@ -179,14 +179,15 @@ public class Orders {
         //calculate information for delivery
         int last = Warehouse.getInstance().getIndexOfLastDelivery();
         int first = Warehouse.getInstance().getIndexOfFirstDelivery();
-        delivery = new Vector<Integer>(last-first+1);
-
-        for (int i = 0; i < delivery.size(); i++){
-            delivery.set(i,0);
+        delivery = new Vector<Integer>();
+        int deliverySize = last - first + 1;
+        
+        for (int i = 0; i < deliverySize; i++){
+            delivery.add(0);
         }
 
         for (int i = 0; i < tasks.size(); i++){
-            delivery.set(tasks.get(i).getFinish()-first,delivery.get(tasks.get(i).getFinish()-first)+1);
+            delivery.set(tasks.get(i).getFinish() - first, delivery.get(tasks.get(i).getFinish() - first) + 1);
         }
     }
 

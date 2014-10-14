@@ -26,7 +26,7 @@ public class Items {
 				String[] elements = line.split(";");
 				if (elements.length < 5) { break; }
 				//shelf,index,-,-,rigidity
-				Item it = new Item(Long.parseLong(elements[1]),Integer.parseInt(elements[4]));
+				Item it = new Item(Long.parseLong(elements[1]),Integer.parseInt(elements[4]), 0);
 				int index = Warehouse.getInstance().getIndexOfShelf(elements[0]);
 				if ( index == -1) {
 				    index = Warehouse.getInstance().getIndexOfShelf(elements[0]);
