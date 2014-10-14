@@ -15,7 +15,7 @@ public class DayPlanning {
     
     public DayPlanning() {
         Warehouse warehouse = Warehouse.getInstance();
-        warehouse.readFromFile("Warehouse.csv");
+        warehouse.readFromFile("Warehouse.csv", "Parameters.csv");
         orders = new Orders("Goods.csv", "Orders.csv", "Items.csv");
         int size = orders.getTasksSize(); 
         remainingTasks = new ArrayList<Integer>();

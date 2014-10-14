@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
 
-public class Warehouse {
+public class Warehouse extends InputParameters{
     private static Warehouse instance;
     
     private PathwayStorage pathways;
@@ -32,10 +32,11 @@ public class Warehouse {
     
     private Vector<Integer> nearestNorthDeliveryToShelf; // size of Vector is equal to numberOfShelves
     private Vector<Integer> nearestSouthDeliveryToShelf; // size of Vector is equal to numberOfShelves
-    private Vector<Integer> nearestContainerToDelivery; // size of Vector is equal to northDelivery.size() + southDelivery.size()
+    private Vector<Integer> nearestContainerToShelf; // size of Vector is equal to numberOfShelves
     
     private Warehouse() {
-        pathways = new PathwayStorage(Direction.Down);
+        super();
+        pathways = new PathwayStorage();
         emptyContainers = new Vector<Point>();
         northDelivery = new Vector<Point>();
         southDelivery = new Vector<Point>();
@@ -44,7 +45,7 @@ public class Warehouse {
        // distanceBetweenObjectsForHeuristic = new Vector<Vector<Double>>();
         nearestNorthDeliveryToShelf = new Vector<Integer>();
         nearestSouthDeliveryToShelf = new Vector<Integer>();
-        nearestContainerToDelivery = new Vector<Integer>();
+        nearestContainerToShelf = new Vector<Integer>();
     }
     
     public static Warehouse getInstance() {
@@ -97,9 +98,8 @@ public class Warehouse {
     }
     
     public int getNearestEmptyContainer(int indexOfObject) {
-        int deliveryFirstIndex = pathways.getNumberOfShelves() + emptyContainers.size();
-        if (indexOfObject < numberOfObjects && indexOfObject >= deliveryFirstIndex) {
-            return nearestContainerToDelivery.get(indexOfObject - deliveryFirstIndex);
+        if (indexOfObject >= 0 && indexOfObject < pathways.getNumberOfShelves()) {
+            return nearestContainerToShelf.get(indexOfObject);
         }
         return findNearestEmptyContainer(indexOfObject);
     }
@@ -119,10 +119,8 @@ public class Warehouse {
     }
     
     private void recountNearestContainers() {
-        int sizeOfVector = northDelivery.size() + southDelivery.size();
-        int firstDeliveryIndex = pathways.getNumberOfShelves() + emptyContainers.size();
-        for (int i = 0; i < sizeOfVector; i++) {
-            nearestContainerToDelivery.add(findNearestEmptyContainer(firstDeliveryIndex + i));
+        for (int i = 0; i < pathways.getNumberOfShelves(); i++) {
+            nearestContainerToShelf.add(findNearestEmptyContainer(i));
         }
     }
     
@@ -265,7 +263,7 @@ public class Warehouse {
                 distanceBetweenObjects.get(i).clear();
             }
             distanceBetweenObjects.clear();
-            nearestContainerToDelivery.clear();
+            nearestContainerToShelf.clear();
             nearestNorthDeliveryToShelf.clear();
             nearestSouthDeliveryToShelf.clear();
         }
@@ -378,18 +376,33 @@ public class Warehouse {
         }
     }
     
-    public void readFromFile(String filename) {
+    public void readTopology(String filename) {
         clearAll();
         String line = "";
         
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(filename));
+            line = br.readLine();
+            if (line == null) { throw new IOException("Wrong format of Warehouse file"); }
+            String [] elements = line.split(";");
+            if (elements.length < 2) { throw new IOException("Wrong format of Warehouse file"); }
+            int direction = Integer.parseInt(elements[1]); 
+            switch (direction) {
+                case 0: 
+                    pathways.setDirection(Direction.Down);
+                    break;
+                case 1:
+                    pathways.setDirection(Direction.Up);
+                    break;
+                default:
+                    throw new IOException("Wrong format of Warehouse file");
+            }
             readExpedition(br, Expedition.North);
             readExpedition(br, Expedition.South);
             line = br.readLine();
             if (line == null) { throw new IOException("Wrong format of Warehouse file"); }
-            String [] elements = line.split(";");
+            elements = line.split(";");
             if (elements.length < 2) { throw new IOException("Wrong format of Warehouse file"); }
             int numberOfRows = Integer.parseInt(elements[1]); 
             readShelfs(br, numberOfRows);
@@ -413,6 +426,11 @@ public class Warehouse {
         recountNearestContainers();
     }
        
+    public void readFromFile(String warehouseFilename,String parametersFilename) {
+        readParameters(parametersFilename);
+        readTopology(warehouseFilename);
+    }
+    
     public void sortIndexesForHeuristic (Vector<OrderItem> orderItems) {
         pathways.sortIndexesForHeuristic(orderItems);
     }

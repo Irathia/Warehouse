@@ -10,10 +10,13 @@ public class PathwayStorage {
     private int numberOfShelves;
     private Direction directionOfFirstPathway;
     
-    public PathwayStorage(Direction directionOfFirstPathway) {
-        this.directionOfFirstPathway = directionOfFirstPathway;    
+    public PathwayStorage() {
         numberOfShelves = 0;
         pathways = new Vector<Pathway>();
+    }
+    
+    public void setDirection(Direction dir) {
+        directionOfFirstPathway = dir;
     }
     
     public int getNumberOfShelves() {
