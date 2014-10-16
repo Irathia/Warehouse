@@ -10,7 +10,6 @@ public class Task {
 	private Time executionTime;
 	private Time deadline;
     private double l;//длина пути
-	public final double v = 0.89; // 3.2 km/h
 	
 	Task(Time deadline){
 		this.deadline = new Time(deadline.getTime());
@@ -69,10 +68,11 @@ public class Task {
 			l += Warehouse.getInstance().getRealDistance(items.get(i).getIndex(),items.get(i+1).getIndex());
 		}
 		
-		l += Warehouse.getInstance().getRealDistance(items.get(items.size()-1).getIndex(),finish);
+		Warehouse warehouse = Warehouse.getInstance();
+		l += warehouse.getRealDistance(items.get(items.size()-1).getIndex(),finish);
 
         this.l = l;//add set length of path
 		
-		executionTime.setTime(Math.round(l/v) * 1000);
+		executionTime.setTime(Math.round(l / warehouse.getSpeed()) * 1000);
 	}
 }

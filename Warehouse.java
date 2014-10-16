@@ -42,7 +42,6 @@ public class Warehouse extends InputParameters{
         southDelivery = new Vector<Point>();
         numberOfObjects = 0;
         distanceBetweenObjects = new Vector<Vector<Double>>();
-       // distanceBetweenObjectsForHeuristic = new Vector<Vector<Double>>();
         nearestNorthDeliveryToShelf = new Vector<Integer>();
         nearestSouthDeliveryToShelf = new Vector<Integer>();
         nearestContainerToShelf = new Vector<Integer>();
@@ -145,57 +144,7 @@ public class Warehouse extends InputParameters{
             }
         }
     }
-/*    
-    private void computeDistancesBetweenObjectsForHeuristic() {
-        int numberOfShelves = pathways.getNumberOfShelves(); 
-        int emptyContSize = numberOfShelves + emptyContainers.size();
-        
-        while (distanceBetweenObjectsForHeuristic.size() < numberOfObjects) {
-            distanceBetweenObjectsForHeuristic.add(new Vector<Double>());
-        }
-        
-        for (int fromObject = 0; fromObject < numberOfShelves; fromObject++) {
-            PointWithIndex from = getPointWithPathwayIndex(fromObject);
-            Direction fromPathwayDirection = pathways.getDirectionOfPathway(from.getIndex()); 
-            for (int toObject = 0; toObject < numberOfObjects; toObject++) {
-                if (toObject >= numberOfShelves  && toObject < emptyContSize) { 
-                    distanceBetweenObjectsForHeuristic.get(fromObject).set(toObject, Double.POSITIVE_INFINITY);
-                    continue;
-                }
-                PointWithIndex to = getPointWithPathwayIndex(fromObject);
-                if (toObject < pathways.getNumberOfShelves()) {
-                    distanceBetweenObjectsForHeuristic.get(fromObject).set(toObject, RouteDistance.computeDistance(fromPathwayDirection, from, from.getIndex(), to, to.getIndex(), pathways));
-                }
-                else {
-                    distanceBetweenObjectsForHeuristic.get(fromObject).set(toObject, RouteDistance.shortestDistance(from, from.getIndex(), to, to.getIndex(), pathways));
-                }
-            }
-        }
-    
-        for (int fromObject = numberOfShelves; fromObject < numberOfObjects; fromObject++) {
-            PointWithIndex from = getPointWithPathwayIndex(fromObject);
-            for (int pathwayIndex = 0; pathwayIndex < pathways.getNumberOfPathways(); pathwayIndex++) {
-                int nearestShelfIndex = pathways.getIndexOfNearestShelfBasedOnDirection(pathwayIndex, from);
-                PointWithIndex to = getPointWithPathwayIndex(nearestShelfIndex);
-                double minimumDistance = RouteDistance.shortestDistance(from, from.getIndex(), to, to.getIndex(), pathways);
-                distanceBetweenObjectsForHeuristic.get(fromObject).set(nearestShelfIndex, minimumDistance);
-                int lastIndex = pathways.getLastShelfIndexInPathway(pathwayIndex);
-                for (int toObject = pathways.getFirstShelfIndexInPathway(pathwayIndex); toObject <= lastIndex; toObject++) {
-                    if (toObject == nearestShelfIndex) { continue; }
-                    distanceBetweenObjectsForHeuristic.get(fromObject).set(toObject, minimumDistance + distanceBetweenObjectsForHeuristic.get(toObject).get(fromObject));
-                }
-            }
-        }
-        
-        for (int fromObject = emptyContSize; fromObject < numberOfObjects; fromObject++) {
-            PointWithIndex from = getPointWithPathwayIndex(fromObject);
-            for (int toObject = numberOfShelves; toObject < emptyContSize; toObject++) {
-                PointWithIndex to = getPointWithPathwayIndex(fromObject);
-                distanceBetweenObjectsForHeuristic.get(fromObject).set(toObject, RouteDistance.shortestDistance(from, from.getIndex(), to, to.getIndex(), pathways));
-            }
-        }
-    }
- */   
+
     private PointWithIndex getPointWithPathwayIndex(int index) {
         if (index < 0 || index >= numberOfObjects) {
             return new PointWithIndex(-1);
@@ -229,13 +178,6 @@ public class Warehouse extends InputParameters{
         return distanceBetweenObjects.get(from).get(to);
     }
     
-/*    public double getDistanceForHeuristic(int from, int to) {
-        if (from < 0 || to < 0 || from >= distanceBetweenObjectsForHeuristic.size() || to >= distanceBetweenObjectsForHeuristic.get(from).size()) {
-            return Double.POSITIVE_INFINITY;
-        }
-        return distanceBetweenObjectsForHeuristic.get(from).get(to);
-    }
-*/    
     public int getIndexOfShelf(String name) {
         return pathways.getShelfIndex(name);
     }
@@ -363,7 +305,7 @@ public class Warehouse extends InputParameters{
                     if (i >= elements.length) {throw new IOException("Wrong format of Warehouse file");}
                     Shelf sh = new Shelf(elements[i], topLeft[j].getX(), bottomRight[j].getY() + (height[j] * numberOfShelfsInRow[j]), width[j], height[j]);
                     pathways.add(j, sh);
-                    if (sh.getName().toUpperCase().contains(EmptyContainer.NAME)) {
+                    if (sh.getName().toUpperCase().contains(I18n.EMPTY_CONTAINER)) {
                         Point p = new Point((sh.getBottomRightX() - sh.getTopLeftX())/2, (sh.getTopLeftY() - sh.getBottomRightY())/2);
                         emptyContainers.add(p);
                     }

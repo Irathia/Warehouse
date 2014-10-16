@@ -32,7 +32,7 @@ public class ShelfRow extends Rectangle {
                 this.setBottomRight(sh.getBottomRight());
             }
         }
-        if (sh.getName().toUpperCase().contains(EmptyContainer.NAME)) {
+        if (sh.getName().toUpperCase().contains(I18n.EMPTY_CONTAINER)) {
             return true;
         }
         double y = (sh.getTopLeftY()-sh.getBottomRightY())/2.0 + sh.getBottomRightY();

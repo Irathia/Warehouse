@@ -17,12 +17,14 @@ public class Orders {
 	private Vector <Order> orders;
 	private Items items;
 	private Vector <Task> tasks;
+	private Vector <Integer> indexOfFirstOrderTask;
     private Vector <Integer> delivery;
 	
 	Orders(String filenameForItems, String fileForShop, String filename)
 	{
 		orders = new Vector<Order>();
 		tasks = new Vector<Task>();
+		indexOfFirstOrderTask = new Vector<Integer>();
 		this.items = new Items(filename);
 		readFromFile(filenameForItems, fileForShop);
 	};
@@ -118,10 +120,10 @@ public class Orders {
     }
 
 	public void divideOrdersToTasks(){
-		for (int i = 0; i < orders.size(); i++){
+	    for (int i = 0; i < orders.size(); i++){
 			orders.get(i).divideOrderToTasks();
 			Vector <Task> t = orders.get(i).getTasks();
-			
+			indexOfFirstOrderTask.add(tasks.size());
 			for (int j = 0; j < t.size(); j++){
 				tasks.add(t.get(j));
 			}
@@ -145,11 +147,11 @@ public class Orders {
 		return tasks.size();
 	}
 	
-	public final Vector <Task> getTask(){
+	public final Vector <Task> getTasks(){
 		return tasks;
 	}
 	
-	public final int getNearestTask(int indexOfPreviousTask, Time current, ArrayList <Integer> remaining){
+	public final int getNearestTask(int indexOfPreviousTask, Time current, ArrayList <Integer> remaining) {
 		int finish = tasks.get(indexOfPreviousTask).getFinish();
 		
 		int minIndex = -1;
@@ -170,9 +172,41 @@ public class Orders {
 		return minIndex;
 	}
 	
+	private int lastTaskIndexOfOrder(int taskIndex) {
+	    int lastIndexOfTask = -1;
+	    for (int i = 1; i < indexOfFirstOrderTask.size(); i++) {
+            if (indexOfFirstOrderTask.get(i) > taskIndex) {
+                lastIndexOfTask = indexOfFirstOrderTask.get(i) - 1;
+                break;
+            }
+        }
+        if (lastIndexOfTask == -1 || indexOfFirstOrderTask.size() > 0) {
+            lastIndexOfTask = tasks.size() - 1; 
+        }
+	    return lastIndexOfTask;
+	}
+	
+	public final int getNearestTaskFromOrderWithMinNumber(int indexOfPreviousTask, Time current, ArrayList <Integer> remaining) {
+        if (remaining.size() < 1) { return -1; }
+	    int finish = tasks.get(indexOfPreviousTask).getFinish();
+        int lastIndexOfMinOrder = lastTaskIndexOfOrder(remaining.get(0));
+        
+        int minIndex = -1;
+        double minDistance = Double.POSITIVE_INFINITY;
+        Time deadline = tasks.get(remaining.get(0)).getDeadline();
+        for (int i = 0; i < remaining.size() && remaining.get(i) <= lastIndexOfMinOrder; i++) { 
+            if (Warehouse.getInstance().getRealDistance(finish, tasks.get(remaining.get(i)).getStart()) < minDistance && ( tasks.get(remaining.get(i)).getExecutionTime().getTime() + current.getTime() + getTimeForMovingBetweenTasks(indexOfPreviousTask, remaining.get(i)).getTime() ) <= deadline.getTime()){
+                minIndex = i;
+                minDistance = Warehouse.getInstance().getRealDistance(finish, tasks.get(remaining.get(i)).getStart());
+            }
+        }
+        return minIndex;
+    }
+	
 	public Time getTimeForMovingBetweenTasks(int firstTask, int secondTask) {
-	    double result = Warehouse.getInstance().getRealDistance(tasks.get(firstTask).getFinish(), tasks.get(secondTask).getStart());
-	    return new Time(Math.round(result/tasks.get(0).v) * 1000);
+	    Warehouse warehouse = Warehouse.getInstance();
+	    double result = warehouse.getRealDistance(tasks.get(firstTask).getFinish(), tasks.get(secondTask).getStart());
+	    return new Time(Math.round(result / warehouse.getSpeed()) * 1000);
 	}
 
     private void numberOfDelivery(){
