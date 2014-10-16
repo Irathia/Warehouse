@@ -73,6 +73,6 @@ public class Task {
 
         this.l = l;//add set length of path
 		
-		executionTime.setTime(Math.round(l / warehouse.getSpeed()) * 1000);
+		executionTime.setTime((long) Math.ceil((l * 1000) / warehouse.getSpeed()));
 	}
 }

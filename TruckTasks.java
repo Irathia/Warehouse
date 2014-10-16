@@ -4,12 +4,14 @@ import java.sql.Time;
 import java.util.Vector;
 
 public class TruckTasks {
-    Vector <Integer> indexOfTasks;
-    Time finishTime;
+    private Vector <Integer> indexOfTasks;
+    private Time finishTime;
+    private double distance;
     
     public TruckTasks() {
         indexOfTasks = new Vector<Integer>();
         finishTime = new Time (0);
+        distance = 0;
     }
     
     public void setTime(Time startTime) {
@@ -34,12 +36,17 @@ public class TruckTasks {
         return indexOfTasks.get(indexOfTasks.size() - 1);
     }
     
-    public void addTask (int taskIndex, Time taskTime) {
+    public void addTask(int taskIndex, Time taskTime, double taskDistance) {
         indexOfTasks.add(taskIndex);
         finishTime.setTime(finishTime.getTime() + taskTime.getTime());
+        distance += taskDistance;
     }
     
-    public Time getFinishTime () {
+    public Time getFinishTime() {
         return finishTime;
+    }
+    
+    public double getDistance() {
+        return distance;
     }
 }

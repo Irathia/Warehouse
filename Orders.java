@@ -206,9 +206,14 @@ public class Orders {
 	public Time getTimeForMovingBetweenTasks(int firstTask, int secondTask) {
 	    Warehouse warehouse = Warehouse.getInstance();
 	    double result = warehouse.getRealDistance(tasks.get(firstTask).getFinish(), tasks.get(secondTask).getStart());
-	    return new Time(Math.round(result / warehouse.getSpeed()) * 1000);
+	    return new Time((long) Math.ceil((result * 1000) / warehouse.getSpeed()));
 	}
 
+	public double getDistanceForMovingBetweenTasks(int firstTask, int secondTask) {
+        Warehouse warehouse = Warehouse.getInstance();
+        return warehouse.getRealDistance(tasks.get(firstTask).getFinish(), tasks.get(secondTask).getStart());
+    }
+	
     private void numberOfDelivery(){
         //calculate information for delivery
         int last = Warehouse.getInstance().getIndexOfLastDelivery();
