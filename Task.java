@@ -9,12 +9,13 @@ public class Task {
 	private int finish, start; 
 	private Time executionTime;
 	private Time deadline;
-    private double l;//длина пути
+    private double l;
 	
 	Task(Time deadline){
 		this.deadline = new Time(deadline.getTime());
 		this.executionTime = new Time(0);
 		items = new Vector<OrderItem> ();
+		this.l = 0;
 	};
 	
 	public final Time getExecutionTime(){
@@ -41,6 +42,10 @@ public class Task {
         return  l;
     }
 
+    public final int getSize() {
+        return items.size();
+    }
+
 	public void addItem(OrderItem value){
 		items.add(value);
 	};
@@ -62,17 +67,19 @@ public class Task {
 	}
 	
 	public void calculateExecutionTime(){
-		//without any stops
-		double l = Warehouse.getInstance().getRealDistance(start,items.get(0).getIndex());;
+        Warehouse warehouse = Warehouse.getInstance();
+        long sec = 0;//time in sec for pick up
+		double l = warehouse.getRealDistance(start,items.get(0).getIndex());
 		for (int i = 0; i < items.size()-1; i++){
-			l += Warehouse.getInstance().getRealDistance(items.get(i).getIndex(),items.get(i+1).getIndex());
+			l += warehouse.getRealDistance(items.get(i).getIndex(),items.get(i+1).getIndex());
+            sec += items.get(i).getNumberOfBoxes(items.get(i).getVolume())*warehouse.getTimeOfRestacking()+warehouse.getTimeOfDeliveryPreparing();
 		}
 		
-		Warehouse warehouse = Warehouse.getInstance();
+
 		l += warehouse.getRealDistance(items.get(items.size()-1).getIndex(),finish);
 
         this.l = l;//add set length of path
 		
-		executionTime.setTime((long) Math.ceil((l * 1000) / warehouse.getSpeed()));
+		executionTime.setTime((long) Math.ceil((l * 1000) / warehouse.getSpeed())+sec*1000+(long)warehouse.getTimeOfContainerPreparing()*1000+(long)warehouse.getTimeOfLabeling()*1000);//time = pick up+path+empty cont
 	}
 }

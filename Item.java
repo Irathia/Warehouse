@@ -7,15 +7,17 @@ public class Item {
 	private long index;
 	private int rigidity;
     private int boxes;
+    private double liters;//1 box = liters
 
     Item(){
 
     };
 
-    Item(long index,int rigidity, int boxes){
+    Item(long index,int rigidity, int boxes, int liters){
         this.index = index;
         this.rigidity = rigidity;
         this.boxes = boxes;
+        this.liters = (double)liters/boxes;
     }
 
     public final long getIndex(){
@@ -30,11 +32,19 @@ public class Item {
         return boxes;
     }
 
+    public final double getLiters() {
+        return liters;
+    }
+
     public void setIndex(long index){
         this.index = index;
     }
 
     public void setRigidity(int rigidity){
         this.rigidity = rigidity;
+    }
+
+    public void setBoxes (int boxes){
+        this.boxes = boxes;
     }
 }

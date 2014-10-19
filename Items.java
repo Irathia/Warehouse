@@ -25,12 +25,13 @@ public class Items {
 			while((line = br.readLine()) != null){
 				String[] elements = line.split(";");
 				if (elements.length < 5) { break; }
-				//shelf,index,-,-,rigidity
-				Item it = new Item(Long.parseLong(elements[1]),Integer.parseInt(elements[4]), 0);
+				//shelf,index,boxes,volume,rigidity
+				Item it = new Item(Long.parseLong(elements[1]),Integer.parseInt(elements[4]),Integer.parseInt(elements[2].replaceAll(" ","")),Integer.parseInt(elements[3].replaceAll(" ","")));
 				int index = Warehouse.getInstance().getIndexOfShelf(elements[0]);
 				if ( index == -1) {
 				    index = Warehouse.getInstance().getIndexOfShelf(elements[0]);
 	            }
+				
 				while (index > items.size()) {
 				    items.add(new Item());
 				}
@@ -51,9 +52,10 @@ public class Items {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        System.out.println("Finish Items");
 	};
 	
-	public final Item getItems(int index)
+	public final Item getItem(int index)
 	{
 		return items.get(index);
 	};
@@ -83,5 +85,9 @@ public class Items {
 
     public final int getSize(){
         return items.size();
+    }
+
+    public final Vector <Item> getItems(){
+        return items;
     }
 }

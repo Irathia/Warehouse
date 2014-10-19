@@ -86,8 +86,12 @@ public class Order implements Comparable<Order>{
 		            t.addItem(oi.get(i));
 		        }
 		        if (volumeOfAllGoodsInContainer != maximumVolumeOfTruck) {
-		            t.addItem(oi.get(j));
-		            oi.get(j).setVolume(volume - (maximumVolumeOfTruck - volumeOfAllGoodsInContainer));
+		            
+                    //boxes
+                    int nOfBoxes = oi.get(j).getNumberOfBoxes(maximumVolumeOfTruck - volumeOfAllGoodsInContainer);
+                    t.addItem(oi.get(j));
+                    t.getItem(t.getSize()-1).setVolume(nOfBoxes*oi.get(j).getLiters());
+		            oi.get(j).setVolume(volume - nOfBoxes*oi.get(j).getLiters());
 	            }
 		        if (deliverySide == Expedition.North) {
                     t.setFinish(Warehouse.getInstance().getNearestNorthDelivery(i));//get finish point
@@ -98,8 +102,12 @@ public class Order implements Comparable<Order>{
 		        t.setStart();
 		        tasks.add(t);
                 volumeOfAllGoodsInContainer = 0;
-                i = j;
-                j--;
+                i = j+1;
+                if (oi.get(j).getVolume() != 0){
+                	i = j;
+                	j--;
+                }
+                
             }
 		    else {
 		        volumeOfAllGoodsInContainer += volume;

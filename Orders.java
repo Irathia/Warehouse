@@ -19,6 +19,7 @@ public class Orders {
 	private Vector <Task> tasks;
 	private Vector <Integer> indexOfFirstOrderTask;
     private Vector <Integer> delivery;
+    private Vector <Integer> counter;//for replenishment()
 	
 	Orders(String filenameForItems, String fileForShop, String filename)
 	{
@@ -60,7 +61,7 @@ public class Orders {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
+        System.out.println("Finish Goods");
         //read vector
 
         line = "";
@@ -80,13 +81,15 @@ public class Orders {
                     currentShop = Long.parseLong(elements[0]);
                     //
                     int indexOfShelf = items.getShelfsIndex(Long.parseLong(elements[1]));
-                    OrderItem oi = new OrderItem(indexOfShelf,items.getItems(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')));
+                    double liters = items.getItem(indexOfShelf).getLiters();
+                    OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),liters);
                     v.add(oi);
                 }
                 else{
                     currentShop = Long.parseLong(elements[0]);
                     int indexOfShelf = items.getShelfsIndex(Long.parseLong(elements[1]));
-                    OrderItem oi = new OrderItem(indexOfShelf,items.getItems(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')));
+                    double liters = items.getItem(indexOfShelf).getLiters();
+                    OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),liters);
                     v.add(oi);
                 }
             }
@@ -100,10 +103,11 @@ public class Orders {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+        System.out.println("Finish Orders");
         this.sortAll();//sort items orders by deadline and items by rigidity and index of shelf 
         this.divideOrdersToTasks();
         this.numberOfDelivery();//info about delivery
+        this.replenishment();//info about replenishment
     }
 
     private Order getOrderByShop(long indexOfShop) {
@@ -118,17 +122,23 @@ public class Orders {
     public final Vector <Integer> getDelivery() {
         return delivery;
     }
+    
+    public final Vector <Integer> getReplenishment(){
+    	return counter;
+    }
 
 	public void divideOrdersToTasks(){
+        System.out.println("size = "+orders.size());
 	    for (int i = 0; i < orders.size(); i++){
 			orders.get(i).divideOrderToTasks();
+            System.out.println("Finish divide "+i+" order");
 			Vector <Task> t = orders.get(i).getTasks();
 			indexOfFirstOrderTask.add(tasks.size());
 			for (int j = 0; j < t.size(); j++){
 				tasks.add(t.get(j));
 			}
 		}
-			
+        System.out.println("Finish divide orders to tasks");
 	}
 	
 	public final Order getOrder(int index)
@@ -141,6 +151,7 @@ public class Orders {
 		for(int i = 0; i < orders.size(); i++){
 			orders.get(i).sortItemsInOrder();
 		}
+        System.out.println("Finish sort all");
 	}
 	
 	public final int getTasksSize(){
@@ -228,9 +239,29 @@ public class Orders {
         for (int i = 0; i < tasks.size(); i++){
             delivery.set(tasks.get(i).getFinish() - first, delivery.get(tasks.get(i).getFinish() - first) + 1);
         }
+
+        System.out.println("Finish number Of delivery");
     }
 
     public void replenishment(){
         //we write info straight into logs
+        Vector <Item> its = new Vector<Item>(items.getItems());
+        counter = new Vector <Integer>();
+
+        for( int i = 0; i < its.size(); i++){
+            counter.add(0);
+        }
+
+        for(int i = 0; i < tasks.size(); i++){
+            for (int j = 0; j < tasks.get(i).getSize(); j++){
+                its.get(tasks.get(i).getItem(j).getIndex()).setBoxes(its.get(tasks.get(i).getItem(j).getIndex()).getBoxes()-tasks.get(i).getItem(j).getNumberOfBoxes(tasks.get(i).getItem(j).getVolume()));
+                if (its.get(tasks.get(i).getItem(j).getIndex()).getBoxes() <= 0){
+                    its.get(tasks.get(i).getItem(j).getIndex()).setBoxes(items.getItem(tasks.get(i).getItem(j).getIndex()).getBoxes());
+                    counter.set(tasks.get(i).getItem(j).getIndex(),counter.get(tasks.get(i).getItem(j).getIndex())+1);
+                }
+            }
+        }
+
+        System.out.println("Finish replenishment");
     }
 }

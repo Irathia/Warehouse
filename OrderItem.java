@@ -5,16 +5,17 @@ public class OrderItem implements Comparable<OrderItem>{
 	private  int index;//index of shelf
 	private  int rigidity;
 	private  double volume;
-    private int numberOfBoxes;//i add it this
+    private double liters;//1 box = liters
 	
 	OrderItem(){
 		
 	};
 	
-	OrderItem(int index, int rigidity, double volume){
+	OrderItem(int index, int rigidity, double volume, double liters){
 		this.index = index;
 		this.rigidity = rigidity;
 		this.volume = volume;
+        this.liters = liters;
 	}
 	
 	public final int getIndex(){
@@ -29,8 +30,13 @@ public class OrderItem implements Comparable<OrderItem>{
     	return volume;
     }
 
-    public final int getNumberOfBoxes(){
-        return numberOfBoxes;
+    public final int getNumberOfBoxes(double v){
+        double b = Math.floor(v/liters);
+        return (int)b;
+    }
+
+    public final double getLiters(){
+        return liters;
     }
 
     public void setIndex(int index){
