@@ -42,7 +42,7 @@ public class Orders {
                 DateFormat formatter = new SimpleDateFormat("HH:mm");
                 String[] time = elements[2].split("-");
                 Expedition exp = Expedition.North;
-                if (elements[3] == "South"){
+                if (elements[3].equals("South")){
                     exp = Expedition.South;
                 }
                 try {

@@ -100,10 +100,10 @@ public class DayPlanning {
             }
         }
         int numberOfTrucks = truckTasks.size();
-        while (! divideTasksToKTrucks(numberOfTrucks)) 
-        {
-            numberOfTrucks++;
-        }
+       // while (! divideTasksToKTrucks(numberOfTrucks)) 
+       // {
+       //     numberOfTrucks++;
+      //  }
     }
     
     public void writeIntoFile(String filename) {
