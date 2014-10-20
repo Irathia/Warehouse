@@ -145,9 +145,9 @@ public class PathwayStorage {
         return -1;
     }
     
-    public Point getPickupPointOfShelf(int shelfIndex) {
+    public PointWithName getPickupPointOfShelf(int shelfIndex) {
         if (shelfIndex < 0 || shelfIndex >= numberOfShelves) {
-            return new Point(Double.POSITIVE_INFINITY,Double.POSITIVE_INFINITY);
+            return new PointWithName(Double.POSITIVE_INFINITY,Double.POSITIVE_INFINITY, "");
         }
         for (int i = 0; i < pathways.size(); i++) {
             if (shelfIndex < pathways.get(i).sizeOfLeftRow()) {
@@ -159,7 +159,7 @@ public class PathwayStorage {
             }
             shelfIndex -= pathways.get(i).sizeOfRightRow();
         }
-        return new Point(Double.POSITIVE_INFINITY,Double.POSITIVE_INFINITY);
+        return new PointWithName(Double.POSITIVE_INFINITY,Double.POSITIVE_INFINITY, "");
     }
     
     public int getIndexOfNearestShelfBasedOnDirection(int pathwayIndex, Point p) {

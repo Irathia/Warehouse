@@ -178,6 +178,25 @@ public class Warehouse extends InputParameters{
         return distanceBetweenObjects.get(from).get(to);
     }
     
+    public String getNameByIndex(int index) {
+        if (index < 0 || index >= numberOfObjects) {
+            return null;
+        }
+        if (index < pathways.getNumberOfShelves()) {
+            return pathways.getPickupPointOfShelf(index).getName();
+        }
+        index -= pathways.getNumberOfShelves();
+        if (index < emptyContainers.size()) {
+            return "(" + emptyContainers.get(index).getX() + ";" + emptyContainers.get(index).getY() + ")";
+        }
+        index -= emptyContainers.size();
+        if (index < northDelivery.size()) {
+            return "(" + northDelivery.get(index).getX() + ";" + northDelivery.get(index).getY() + ")";
+        }
+        index -= northDelivery.size();
+        return "(" + southDelivery.get(index).getX() + ";" + southDelivery.get(index).getY() + ")";
+    }
+    
     public int getIndexOfShelf(String name) {
         return pathways.getShelfIndex(name);
     }
@@ -367,7 +386,7 @@ public class Warehouse extends InputParameters{
         recountNearestDeliveries();
         recountNearestContainers();
     }
-       
+    
     public void readFromFile(String warehouseFilename,String parametersFilename) {
         readParameters(parametersFilename);
         readTopology(warehouseFilename);

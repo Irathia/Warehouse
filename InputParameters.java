@@ -4,19 +4,40 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Time;
 
 public class InputParameters {
     private double speed; // meters per second
     private double timeOfPreparingEmptyContainer; // seconds
     private double timeOfPreparingForDelivery; //seconds
     private double timeOfRestacking; //seconds
-    private double timeOfLabeling;// seconds
+    private double timeOfLabeling; // seconds
+    private double truckCapacity; // litre
+    private Time startOfWork;
+    private Time startOfBreak;
+    private Time finishOfBreak;
     
     public InputParameters() {
         speed = 0;
         timeOfPreparingEmptyContainer = 0;
         timeOfPreparingForDelivery = 0;
         timeOfLabeling = 0;
+    }
+    
+    public double getTruckCapacity() {
+        return truckCapacity;
+    }
+    
+    public Time getStartOfWork() {
+        return startOfWork;
+    }
+    
+    public Time getStartOfBreak() {
+        return startOfBreak;
+    }
+    
+    public Time getFinishOfBreak() {
+        return finishOfBreak;
     }
     
     public double getTimeOfRestacking() {
