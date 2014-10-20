@@ -9,7 +9,7 @@ public class Order implements Comparable<Order>{
 	private Time deadline;
 	private Expedition deliverySide;
 	private Vector <Task> tasks;
-	private double maximumVolumeOfTruck = 300; 
+	private double maximumVolumeOfTruck; 
 	
 	Order(Time deadline, Expedition deliverySide, long indexOfShop)
 	{
@@ -18,6 +18,7 @@ public class Order implements Comparable<Order>{
         this.indexOfShop = indexOfShop;
         this.deadline = deadline;
         this.deliverySide = deliverySide;
+        this.maximumVolumeOfTruck = Warehouse.getInstance().getTruckCapacity();
 	};
 	
 	Order(Vector <OrderItem>items,Time deadline, Expedition deliverySide, long indexOfShop){
@@ -27,6 +28,7 @@ public class Order implements Comparable<Order>{
         this.items = items;
 		this.deadline = deadline;
 		this.deliverySide = deliverySide;
+		this.maximumVolumeOfTruck = Warehouse.getInstance().getTruckCapacity();
 	};
 	
 	public final Time getDeadline()
@@ -88,7 +90,7 @@ public class Order implements Comparable<Order>{
 		        if (volumeOfAllGoodsInContainer != maximumVolumeOfTruck) {
 		            
                     //boxes
-                    int nOfBoxes = oi.get(j).getNumberOfBoxes(maximumVolumeOfTruck - volumeOfAllGoodsInContainer);
+                    int nOfBoxes = oi.get(j).getNumberOfBoxes(maximumVolumeOfTruck - volumeOfAllGoodsInContainer,true);
                     t.addItem(oi.get(j));
                     t.getItem(t.getSize()-1).setVolume(nOfBoxes*oi.get(j).getLiters());
 		            oi.get(j).setVolume(volume - nOfBoxes*oi.get(j).getLiters());

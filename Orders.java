@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 public class Orders {
 	
@@ -46,7 +47,29 @@ public class Orders {
                     exp = Expedition.South;
                 }
                 try {
-                    Order o = new Order(new Time(formatter.parse(time[1]).getTime()), exp, Long.parseLong(elements[0]));
+                	Time deadline = new Time(formatter.parse(time[1]).getTime());
+                	Time startOfWork = Warehouse.getInstance().getStartOfWork();
+                	Time startOfBreak = Warehouse.getInstance().getStartOfBreak();
+                	Time finishOfBreak = Warehouse.getInstance().getFinishOfBreak();
+                	Time midnight = new Time(formatter.parse("24:00").getTime());
+                	
+                	if (deadline.getTime() < startOfBreak.getTime() ){
+                		if (deadline.getTime() < startOfWork.getTime()){
+                			deadline.setTime(deadline.getTime()+(midnight.getTime()-startOfWork.getTime()));
+                		}
+                		else{
+                			deadline.setTime(deadline.getTime()-startOfWork.getTime());
+                		}
+                	}
+                	else {
+                		if (deadline.getTime() < startOfWork.getTime()){
+                			deadline.setTime(deadline.getTime()+(midnight.getTime()-startOfWork.getTime())-(finishOfBreak.getTime()-startOfBreak.getTime()));
+                		}
+                		else{
+                			deadline.setTime(deadline.getTime()-startOfWork.getTime()-(finishOfBreak.getTime()-startOfBreak.getTime()));
+                		}
+                	}
+                    Order o = new Order(deadline, exp, Long.parseLong(elements[0]));
                     orders.add(o);
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -61,7 +84,6 @@ public class Orders {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        System.out.println("Finish Goods");
         //read vector
 
         line = "";
@@ -73,6 +95,7 @@ public class Orders {
             while((line = br.readLine()) != null){
                 String[] elements = line.split(";");
                 //indexForShop,indexForGoods,-,volume,-
+                
                 if (elements.length == 0) { break; }
                 if (currentShop != Long.parseLong(elements[0]) && currentShop != 0L){
                     this.getOrderByShop(currentShop).setItems(v);
@@ -80,6 +103,7 @@ public class Orders {
                     v.clear();
                     currentShop = Long.parseLong(elements[0]);
                     //
+                    if (items.isExist(Long.parseLong(elements[1])) == false) {break;}
                     int indexOfShelf = items.getShelfsIndex(Long.parseLong(elements[1]));
                     double liters = items.getItem(indexOfShelf).getLiters();
                     OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),liters);
@@ -87,6 +111,7 @@ public class Orders {
                 }
                 else{
                     currentShop = Long.parseLong(elements[0]);
+                    if (items.isExist(Long.parseLong(elements[1])) == false) {break;}
                     int indexOfShelf = items.getShelfsIndex(Long.parseLong(elements[1]));
                     double liters = items.getItem(indexOfShelf).getLiters();
                     OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),liters);
@@ -103,11 +128,11 @@ public class Orders {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        System.out.println("Finish Orders");
         this.sortAll();//sort items orders by deadline and items by rigidity and index of shelf 
         this.divideOrdersToTasks();
         this.numberOfDelivery();//info about delivery
         this.replenishment();//info about replenishment
+        this.writeToLOG();
     }
 
     private Order getOrderByShop(long indexOfShop) {
@@ -128,17 +153,14 @@ public class Orders {
     }
 
 	public void divideOrdersToTasks(){
-        System.out.println("size = "+orders.size());
 	    for (int i = 0; i < orders.size(); i++){
 			orders.get(i).divideOrderToTasks();
-            System.out.println("Finish divide "+i+" order");
 			Vector <Task> t = orders.get(i).getTasks();
 			indexOfFirstOrderTask.add(tasks.size());
 			for (int j = 0; j < t.size(); j++){
 				tasks.add(t.get(j));
 			}
 		}
-        System.out.println("Finish divide orders to tasks");
 	}
 	
 	public final Order getOrder(int index)
@@ -151,7 +173,6 @@ public class Orders {
 		for(int i = 0; i < orders.size(); i++){
 			orders.get(i).sortItemsInOrder();
 		}
-        System.out.println("Finish sort all");
 	}
 	
 	public final int getTasksSize(){
@@ -240,7 +261,6 @@ public class Orders {
             delivery.set(tasks.get(i).getFinish() - first, delivery.get(tasks.get(i).getFinish() - first) + 1);
         }
 
-        System.out.println("Finish number Of delivery");
     }
 
     public void replenishment(){
@@ -254,7 +274,7 @@ public class Orders {
 
         for(int i = 0; i < tasks.size(); i++){
             for (int j = 0; j < tasks.get(i).getSize(); j++){
-                its.get(tasks.get(i).getItem(j).getIndex()).setBoxes(its.get(tasks.get(i).getItem(j).getIndex()).getBoxes()-tasks.get(i).getItem(j).getNumberOfBoxes(tasks.get(i).getItem(j).getVolume()));
+                its.get(tasks.get(i).getItem(j).getIndex()).setBoxes(its.get(tasks.get(i).getItem(j).getIndex()).getBoxes()-tasks.get(i).getItem(j).getNumberOfBoxes(tasks.get(i).getItem(j).getVolume(),false));
                 if (its.get(tasks.get(i).getItem(j).getIndex()).getBoxes() <= 0){
                     its.get(tasks.get(i).getItem(j).getIndex()).setBoxes(items.getItem(tasks.get(i).getItem(j).getIndex()).getBoxes());
                     counter.set(tasks.get(i).getItem(j).getIndex(),counter.get(tasks.get(i).getItem(j).getIndex())+1);
@@ -262,6 +282,24 @@ public class Orders {
             }
         }
 
-        System.out.println("Finish replenishment");
+    }
+    
+    public void writeToLOG(){
+    	Logger logger = Logger.getLogger("Test");
+    	
+    	//delivery
+    	logger.info(I18n.DELIVERY);
+    	int first = Warehouse.getInstance().getIndexOfFirstDelivery();
+    	for(int i = 0; i < delivery.size(); i++){
+    		logger.info(Warehouse.getInstance().getNameByIndex(i+first)+": "+delivery.get(i)+I18n.TIMES);
+    	}
+    	
+    	//replenishment
+    	logger.info(I18n.REPLENISHMENT);
+    	for(int i = 0; i < counter.size(); i++){
+    		if (counter.get(i) != 0){
+    			logger.info(Warehouse.getInstance().getNameByIndex(i)+": "+counter.get(i)+I18n.TIMES);
+    		}
+    	}
     }
 }

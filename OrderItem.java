@@ -30,9 +30,13 @@ public class OrderItem implements Comparable<OrderItem>{
     	return volume;
     }
 
-    public final int getNumberOfBoxes(double v){
-        double b = Math.floor(v/liters);
-        return (int)b;
+    public final int getNumberOfBoxes(double v, boolean floor){
+    	if (floor == true){
+    		return (int) Math.floor(v/liters);
+    	}
+    	else{
+    		return (int)  Math.ceil(v/liters);
+    	}
     }
 
     public final double getLiters(){

@@ -90,4 +90,13 @@ public class Items {
     public final Vector <Item> getItems(){
         return items;
     }
+    
+    public boolean isExist(long index){
+    	for (int i = 0; i < items.size(); i++){
+    		if (items.get(i).getIndex() == index){
+    			return true;
+    		}
+    	}
+    	return false;
+    }
 }

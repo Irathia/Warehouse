@@ -72,7 +72,7 @@ public class Task {
 		double l = warehouse.getRealDistance(start,items.get(0).getIndex());
 		for (int i = 0; i < items.size()-1; i++){
 			l += warehouse.getRealDistance(items.get(i).getIndex(),items.get(i+1).getIndex());
-            sec += items.get(i).getNumberOfBoxes(items.get(i).getVolume())*warehouse.getTimeOfRestacking()+warehouse.getTimeOfDeliveryPreparing();
+            sec += items.get(i).getNumberOfBoxes(items.get(i).getVolume(),false)*warehouse.getTimeOfRestacking()+warehouse.getTimeOfDeliveryPreparing();
 		}
 		
 
