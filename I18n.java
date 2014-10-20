@@ -11,5 +11,5 @@ public class I18n {
     public static final String TOTAL_TIME = "Общее время (сек)";
     public static final String REPLENISHMENT = "Информация по пополнениям";
     public static final String DELIVERY = "Информация по отгрузке";
-    public static final String TIMES = " раз";
+    public static final String TIMES = " раз(а)";
 }

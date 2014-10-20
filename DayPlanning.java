@@ -44,36 +44,38 @@ public class DayPlanning {
         }
         clearAll();
         calculateRemainingTasks();
-        Time startTime = new Time (orders.getOrder(0).getDeadline().getTime());
-        startTime.setHours(startTime.getHours() - 1);
+        ArrayList <Integer> availableTrucks = new ArrayList<Integer>();
+        for (int j = 0; j < k; j++) {
+            availableTrucks.add(j);
+        }
+        Time startTime = new Time (0);
         for (int i = 0; i < k; i++) {
             truckTasks.add(new TruckTasks());
             truckTasks.get(i).setTime(startTime);
             truckTasks.get(i).addTask(remainingTasks.get(0), orders.getTasks().get(remainingTasks.get(0)).getExecutionTime(), orders.getTasks().get(remainingTasks.get(0)).getL());
-            remainingTasks.remove(remainingTasks.get(0));
+            remainingTasks.remove(0);
         }
-        for (int i = 0; i < remainingTasks.size(); ) {
-            int indexOfTruckWithMinTime = 0;
-            for (int j = 1; j < k; j++) {
-                if (truckTasks.get(j).getFinishTime().getTime() < truckTasks.get(indexOfTruckWithMinTime).getFinishTime().getTime()) {
-                    indexOfTruckWithMinTime = j;
+        for (int i = 0; i < remainingTasks.size() && availableTrucks.size() != 0; ) {
+            int indexOfAvailableTruckWithMinTime = 0;
+            for (int j = 1; j < availableTrucks.size(); j++) {
+                if (truckTasks.get(availableTrucks.get(j)).getFinishTime().getTime() < truckTasks.get(availableTrucks.get(indexOfAvailableTruckWithMinTime)).getFinishTime().getTime()) {
+                    indexOfAvailableTruckWithMinTime = j;
                 }
-                int index = orders.getNearestTaskFromOrderWithMinNumber(truckTasks.get(indexOfTruckWithMinTime).getLastTask(), truckTasks.get(indexOfTruckWithMinTime).getFinishTime(), remainingTasks);
-                if (index == -1) {
-                    break;
-                }
+            }
+            int index = orders.getNearestTaskFromOrderWithMinNumber(truckTasks.get(availableTrucks.get(indexOfAvailableTruckWithMinTime)).getLastTask(), truckTasks.get(availableTrucks.get(indexOfAvailableTruckWithMinTime)).getFinishTime(), remainingTasks);
+            if (index == -1) {
+                availableTrucks.remove(indexOfAvailableTruckWithMinTime);
+            }
+            else {
                 Time execTime = new Time( orders.getTasks().get(remainingTasks.get(index)).getExecutionTime().getTime() + orders.getTimeForMovingBetweenTasks(truckTasks.get(i).getLastTask(), remainingTasks.get(index) ).getTime());
-                truckTasks.get(indexOfTruckWithMinTime).addTask(remainingTasks.get(index), execTime, orders.getTasks().get(remainingTasks.get(index)).getL() + orders.getDistanceForMovingBetweenTasks(truckTasks.get(i).getLastTask(), remainingTasks.get(index)));
+                truckTasks.get(availableTrucks.get(indexOfAvailableTruckWithMinTime)).addTask(remainingTasks.get(index), execTime, orders.getTasks().get(remainingTasks.get(index)).getL() + orders.getDistanceForMovingBetweenTasks(truckTasks.get(i).getLastTask(), remainingTasks.get(index)));
                 remainingTasks.remove(index);
             }
         }
-        
-        if (remainingTasks.size() != 0) {
-            return false;
-        }
-        else {
+        if (remainingTasks.size() == 0) {
             return true;
         }
+        return false;
     }
     
     public void divideTasksToTrucks() {
@@ -84,11 +86,10 @@ public class DayPlanning {
         for (int i = 0; i < size && remainingTasks.size() != 0; i++) {
             if (remainingTasks.size() == 0) { break; }
             truckTasks.add(new TruckTasks());
-            Time startTime = new Time (orders.getOrder(0).getDeadline().getTime());
-            startTime.setHours(startTime.getHours() - 1);
+            Time startTime = new Time (0);
             truckTasks.get(i).setTime(startTime);
             truckTasks.get(i).addTask(remainingTasks.get(0), orders.getTasks().get(remainingTasks.get(0)).getExecutionTime(), orders.getTasks().get(remainingTasks.get(0)).getL());
-            remainingTasks.remove(remainingTasks.get(0));
+            remainingTasks.remove(0);
             while (remainingTasks.size() != 0 && truckTasks.get(i).getFinishTime().getTime() < deadlineOfLastTask.getTime()) {
                 int index = orders.getNearestTask(truckTasks.get(i).getLastTask(), truckTasks.get(i).getFinishTime(), remainingTasks);
                 if (index == -1) {
@@ -100,16 +101,15 @@ public class DayPlanning {
             }
         }
         int numberOfTrucks = truckTasks.size();
-       // while (! divideTasksToKTrucks(numberOfTrucks)) 
-       // {
-       //     numberOfTrucks++;
-      //  }
+     //   while (! divideTasksToKTrucks(numberOfTrucks)) 
+     //   {
+     //       numberOfTrucks++;
+     //   }
     }
     
     public void writeIntoFile(String filename) {
         BufferedWriter writer = null;
-        Time startTime = new Time (orders.getOrder(0).getDeadline().getTime());
-        startTime.setHours(startTime.getHours() - 1);
+        Time startTime = new Time (0);
         Warehouse warehouse = Warehouse.getInstance();
         try {
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1251"));

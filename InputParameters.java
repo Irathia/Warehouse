@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class InputParameters {
     private double speed; // meters per second
@@ -12,7 +15,7 @@ public class InputParameters {
     private double timeOfPreparingForDelivery; //seconds
     private double timeOfRestacking; //seconds
     private double timeOfLabeling; // seconds
-    private double truckCapacity; // litre
+    private double truckCapacity; // liter
     private Time startOfWork;
     private Time startOfBreak;
     private Time finishOfBreak;
@@ -22,6 +25,7 @@ public class InputParameters {
         timeOfPreparingEmptyContainer = 0;
         timeOfPreparingForDelivery = 0;
         timeOfLabeling = 0;
+        truckCapacity = 0;
     }
     
     public double getTruckCapacity() {
@@ -72,6 +76,23 @@ public class InputParameters {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(filename));
+            String line = br.readLine();
+            if (line == null) { throw new IOException("Wrong format of Parameters file"); }
+            String [] elements = line.split(";");
+            DateFormat formatter = new SimpleDateFormat("HH:mm");
+            if (elements.length < 2) { throw new IOException("Wrong format of Parameters file"); } 
+            startOfWork = new Time(formatter.parse(elements[1]).getTime());
+            
+            line = br.readLine();
+            if (line == null) { throw new IOException("Wrong format of Parameters file"); }
+            elements = line.split(";");
+            if (elements.length < 2) { throw new IOException("Wrong format of Parameters file"); } 
+            elements = elements[1].split("-");
+            if (elements.length < 2) { throw new IOException("Wrong format of Parameters file"); } 
+            startOfBreak = new Time(formatter.parse(elements[0]).getTime());
+            finishOfBreak = new Time(formatter.parse(elements[1]).getTime());
+            
+            truckCapacity = readDouble(br);
             speed = readDouble(br);
             speed /= 3.6;
             timeOfRestacking = readDouble(br);
@@ -81,6 +102,8 @@ public class InputParameters {
         } catch (FileNotFoundException e1) {
             e1.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
             e.printStackTrace();
         } finally {
             try {

@@ -53,7 +53,7 @@ public class Orders {
                 	Time finishOfBreak = Warehouse.getInstance().getFinishOfBreak();
                 	Time midnight = new Time(formatter.parse("24:00").getTime());
                 	
-                	if (deadline.getTime() < startOfBreak.getTime() ){
+                	if (deadline.getTime() <= startOfBreak.getTime() ){
                 		if (deadline.getTime() < startOfWork.getTime()){
                 			deadline.setTime(deadline.getTime()+(midnight.getTime()-startOfWork.getTime()));
                 		}
@@ -197,8 +197,9 @@ public class Orders {
 				}
 				i++;
 			}
-			if (minIndex != -1 || i ==remaining.size()) { break; }
+			if (minIndex != -1 || i == remaining.size()) { break; }
 			deadline = tasks.get(remaining.get(i)).getDeadline();
+			i--;
 		}
 		
 		return minIndex;
@@ -220,19 +221,27 @@ public class Orders {
 	
 	public final int getNearestTaskFromOrderWithMinNumber(int indexOfPreviousTask, Time current, ArrayList <Integer> remaining) {
         if (remaining.size() < 1) { return -1; }
-	    int finish = tasks.get(indexOfPreviousTask).getFinish();
-        int lastIndexOfMinOrder = lastTaskIndexOfOrder(remaining.get(0));
+	    //int finish = tasks.get(indexOfPreviousTask).getFinish();
+        //int lastIndexOfMinOrder = lastTaskIndexOfOrder(remaining.get(0));
         
-        int minIndex = -1;
-        double minDistance = Double.POSITIVE_INFINITY;
+        int curIndex = -1;
+        Time maxExecutionTimeDistance = new Time(0);
         Time deadline = tasks.get(remaining.get(0)).getDeadline();
-        for (int i = 0; i < remaining.size() && remaining.get(i) <= lastIndexOfMinOrder; i++) { 
-            if (Warehouse.getInstance().getRealDistance(finish, tasks.get(remaining.get(i)).getStart()) < minDistance && ( tasks.get(remaining.get(i)).getExecutionTime().getTime() + current.getTime() + getTimeForMovingBetweenTasks(indexOfPreviousTask, remaining.get(i)).getTime() ) <= deadline.getTime()){
-                minIndex = i;
-                minDistance = Warehouse.getInstance().getRealDistance(finish, tasks.get(remaining.get(i)).getStart());
+        for (int i = 0; i < remaining.size(); i++) { 
+            while (i < remaining.size() && tasks.get(remaining.get(i)).getDeadline().getTime() == deadline.getTime()){
+                long allTime = tasks.get(remaining.get(i)).getExecutionTime().getTime() + current.getTime() + getTimeForMovingBetweenTasks(indexOfPreviousTask, remaining.get(i)).getTime();
+                if ( (allTime) <= tasks.get(remaining.get(i)).getDeadline().getTime()
+                        && (tasks.get(remaining.get(i)).getExecutionTime().getTime() > maxExecutionTimeDistance.getTime())){
+                    maxExecutionTimeDistance = tasks.get(remaining.get(i)).getExecutionTime();
+                    curIndex = i;
+                }
+                i++;
             }
+            if (curIndex != -1 || i == remaining.size()) { break; }
+            deadline = tasks.get(remaining.get(i)).getDeadline();
+            i--;
         }
-        return minIndex;
+        return curIndex;
     }
 	
 	public Time getTimeForMovingBetweenTasks(int firstTask, int secondTask) {
