@@ -18,6 +18,13 @@ public class OrderItem implements Comparable<OrderItem>{
         this.liters = liters;
 	}
 	
+	OrderItem(OrderItem item){
+		this.index = item.index;
+		this.rigidity = item.rigidity;
+		this.volume = item.volume;
+        this.liters = item.liters;
+	}
+	
 	public final int getIndex(){
         return index;
     }

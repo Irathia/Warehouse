@@ -1,7 +1,12 @@
 package Warehouse;
 
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 public class Order implements Comparable<Order>{
 	private long indexOfShop;
@@ -91,15 +96,15 @@ public class Order implements Comparable<Order>{
 		            
                     //boxes
                     int nOfBoxes = oi.get(j).getNumberOfBoxes(maximumVolumeOfTruck - volumeOfAllGoodsInContainer,true);
-                    t.addItem(oi.get(j));
+                    t.addItem(new OrderItem(oi.get(j)));
                     t.getItem(t.getSize()-1).setVolume(nOfBoxes*oi.get(j).getLiters());
 		            oi.get(j).setVolume(volume - nOfBoxes*oi.get(j).getLiters());
 	            }
 		        if (deliverySide == Expedition.North) {
-                    t.setFinish(Warehouse.getInstance().getNearestNorthDelivery(i));//get finish point
+                    t.setFinish(Warehouse.getInstance().getNearestNorthDelivery(t.getItem(t.getSize()-1).getIndex()));//get finish point
                 }
 		        else {
-                    t.setFinish(Warehouse.getInstance().getNearestSouthDelivery(i));
+                    t.setFinish(Warehouse.getInstance().getNearestSouthDelivery(t.getItem(t.getSize()-1).getIndex()));
                 }
 		        t.setStart();
 		        tasks.add(t);
@@ -121,24 +126,34 @@ public class Order implements Comparable<Order>{
                 t.addItem(oi.get(i));
             }
 		    if (deliverySide == Expedition.North) {
-                t.setFinish(Warehouse.getInstance().getNearestNorthDelivery(i));//get finish point
+                t.setFinish(Warehouse.getInstance().getNearestNorthDelivery(t.getItem(t.getSize()-1).getIndex()));//get finish point
             }
             else {
-                t.setFinish(Warehouse.getInstance().getNearestSouthDelivery(i));
+                t.setFinish(Warehouse.getInstance().getNearestSouthDelivery(t.getItem(t.getSize()-1).getIndex()));
             }
             t.setStart();
             tasks.add(t);
         }
 		
+		Time t = new Time((long)0);
+		Calendar cal1 = Calendar.getInstance();
+		cal1.setTimeInMillis(t.getTime());
+		System.out.println(cal1.getTime());
+		
 		for(int j = 0; j < tasks.size(); j++){
 			tasks.get(j).calculateExecutionTime();
+			Calendar cal = Calendar.getInstance();
+			long a = tasks.get(j).getA();
+			cal.setTimeInMillis(a*1000);
+			
+			//System.out.println(cal.getTime());
 		}
 	};
 	
 	public final Time executionTimeOfAllTasks()	{
 		Time t = new Time(0);
 		for (int i = 0; i < tasks.size(); i++)
-			t.setTime(tasks.get(i).getExecutionTime().getTime()+t.getTime()* 1000);
+			t.setTime(tasks.get(i).getExecutionTime().getTime()+t.getTime());
 		return t;
 	};
 	
