@@ -276,19 +276,26 @@ public class Orders {
         //we write info straight into logs
         Vector <Item> its = new Vector<Item>(items.getItems());
         counter = new Vector <Integer>();
-
+        Vector <Double> v = new Vector <Double>();
         for( int i = 0; i < its.size(); i++){
             counter.add(0);
+            v.add(0.0);
         }
 
         for(int i = 0; i < tasks.size(); i++){
             for (int j = 0; j < tasks.get(i).getSize(); j++){
-                its.get(tasks.get(i).getItem(j).getIndex()).setBoxes(its.get(tasks.get(i).getItem(j).getIndex()).getBoxes()-tasks.get(i).getItem(j).getNumberOfBoxes(tasks.get(i).getItem(j).getVolume(),false));
-                if (its.get(tasks.get(i).getItem(j).getIndex()).getBoxes() <= 0){
+            	v.set(tasks.get(i).getItem(j).getIndex(), v.get(tasks.get(i).getItem(j).getIndex()) + tasks.get(i).getItem(j).getNumberOfBoxes(tasks.get(i).getItem(j).getVolume(),false));
+                //its.get(tasks.get(i).getItem(j).getIndex()).setBoxes(its.get(tasks.get(i).getItem(j).getIndex()).getBoxes()-tasks.get(i).getItem(j).getNumberOfBoxes(tasks.get(i).getItem(j).getVolume(),false));
+                
+                /*if (its.get(tasks.get(i).getItem(j).getIndex()).getBoxes() <= 0){
                     its.get(tasks.get(i).getItem(j).getIndex()).setBoxes(items.getItem(tasks.get(i).getItem(j).getIndex()).getBoxes());
                     counter.set(tasks.get(i).getItem(j).getIndex(),counter.get(tasks.get(i).getItem(j).getIndex())+1);
-                }
+                }*/
             }
+        }
+        
+        for( int i = 0; i < its.size(); i++){
+            counter.set(i,(int)Math.ceil(v.get(i)/(its.get(i).getBoxes())));
         }
 
     }

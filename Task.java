@@ -18,6 +18,15 @@ public class Task {
 		this.l = 0;
 	};
 	
+	Task(Task t){
+		this.deadline = new Time(t.getDeadline().getTime());
+		this.executionTime = new Time(t.getExecutionTime().getTime());
+		this.items = new Vector<OrderItem> (t.getItems());
+		this.l = t.getL();
+		this.start = t.getStart();
+		this.finish = t.getFinish();
+	}
+	
 	public final Time getExecutionTime(){
 		return executionTime;
 	};
@@ -37,6 +46,10 @@ public class Task {
 	public final OrderItem getItem(int index){
 		return items.get(index);
 	};
+	
+	public final Vector <OrderItem> getItems(){
+		return items;
+	}
 
     public final double getL() {
         return  l;
@@ -49,6 +62,10 @@ public class Task {
 	public void addItem(OrderItem value){
 		items.add(value);
 	};
+	
+	public void deleteItem(int index){
+		items.remove(index);
+	}
 	
 	public void clearAll(){
 		start = 0;
