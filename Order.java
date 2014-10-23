@@ -135,18 +135,11 @@ public class Order implements Comparable<Order>{
             tasks.add(t);
         }
 		
-		Time t = new Time((long)0);
-		Calendar cal1 = Calendar.getInstance();
-		cal1.setTimeInMillis(t.getTime());
-		System.out.println(cal1.getTime());
-		
 		for(int j = 0; j < tasks.size(); j++){
 			tasks.get(j).calculateExecutionTime();
 			Calendar cal = Calendar.getInstance();
-			long a = tasks.get(j).getA();
-			cal.setTimeInMillis(a*1000);
-			
-			//System.out.println(cal.getTime());
+			cal.setTimeInMillis(tasks.get(j).getExecutionTime().getTime());
+			System.out.println(cal.getTime());
 		}
 	};
 	

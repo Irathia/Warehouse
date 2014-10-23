@@ -8,23 +8,18 @@ public class Task {
 	private Vector <OrderItem> items;
 	private int finish, start; 
 	private Time executionTime;
-	private long a;
 	private Time deadline;
     private double l;
 	
 	Task(Time deadline){
 		this.deadline = new Time(deadline.getTime());
 		this.executionTime = new Time(0);
-		a = 0;
 		items = new Vector<OrderItem> ();
 		this.l = 0;
 	};
 	
 	public final Time getExecutionTime(){
 		return executionTime;
-	};
-	public final long getA(){
-		return a;
 	};
 	
 	public final int getFinish(){
@@ -91,7 +86,6 @@ public class Task {
 		l += warehouse.getRealDistance(items.get(items.size()-1).getIndex(),finish);
 
         this.l = l;//add set length of path
-		a += (long) Math.ceil((l) / warehouse.getSpeed())+sec+(long)warehouse.getTimeOfContainerPreparing()+(long)warehouse.getTimeOfLabeling();
 		executionTime.setTime((long) Math.ceil((l * 1000) / warehouse.getSpeed())+sec*1000+(long)warehouse.getTimeOfContainerPreparing()*1000+(long)warehouse.getTimeOfLabeling()*1000);//time = pick up+path+empty cont
 	}
 }
