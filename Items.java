@@ -52,7 +52,7 @@ public class Items {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        System.out.println("Finish Items");
+        //System.out.println("Finish Items");
 	};
 	
 	public final Item getItem(int index)

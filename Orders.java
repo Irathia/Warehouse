@@ -297,6 +297,12 @@ public class Orders {
         for( int i = 0; i < its.size(); i++){
             counter.set(i,(int)Math.ceil(v.get(i)/(its.get(i).getBoxes())));
         }
+        for( int i = 0; i < counter.size(); i++){
+        	if (counter.get(i) != 0){
+        		counter.set(i,counter.get(i)-1);
+        	}
+            
+        }
 
     }
     
