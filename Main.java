@@ -3,11 +3,12 @@ package Warehouse;
 import java.io.IOException;
 import java.util.TimeZone;
 import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 public class Main {
 
+	
     /**
      * @param args
      */
@@ -19,8 +20,12 @@ public class Main {
     	try {
     		fh = new FileHandler("test.log");  
             logger.addHandler(fh);
-            SimpleFormatter formatter = new SimpleFormatter();  
+            MySimpleFormatter formatter = new MySimpleFormatter();  
             fh.setFormatter(formatter);  
+            for(Handler iHandler:logger.getParent().getHandlers())
+            {
+            logger.getParent().removeHandler(iHandler);
+            }
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -33,3 +38,5 @@ public class Main {
         dayPlanning.writeIntoFile("Result.csv");
     }
 }
+
+

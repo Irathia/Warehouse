@@ -151,12 +151,12 @@ public class Order implements Comparable<Order>{
 	        }
         }
 		
-		for(int j = 0; j < tasks.size(); j++){
+	/*	for(int j = 0; j < tasks.size(); j++){
 			//tasks.get(j).calculateExecutionTime();
 			Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(tasks.get(j).getExecutionTime().getTime());
 			System.out.println(cal.getTime());
-		}
+		}*/
 	};
 	
 	public final Time executionTimeOfAllTasks()	{
