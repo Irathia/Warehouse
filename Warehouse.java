@@ -322,6 +322,10 @@ public class Warehouse extends InputParameters{
             for (int j = 0; j < numberOfRows; j++) {
                 if (numberOfShelfsInRow[j] > 0) {
                     if (i >= elements.length) {throw new IOException("Wrong format of Warehouse file");}
+                    if (pathways.getShelfIndex(elements[i]) != -1) {
+                        i++;
+                        continue;
+                    }
                     Shelf sh = new Shelf(elements[i], topLeft[j].getX(), bottomRight[j].getY() + (height[j] * numberOfShelfsInRow[j]), width[j], height[j]);
                     pathways.add(j, sh);
                     if (sh.getName().toUpperCase().contains(I18n.EMPTY_CONTAINER)) {
