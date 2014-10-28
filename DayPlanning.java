@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 public class DayPlanning {
     private Vector <TruckTasks> truckTasks;
@@ -52,8 +53,9 @@ public class DayPlanning {
         for (int i = 0; i < k; i++) {
             truckTasks.add(new TruckTasks());
             truckTasks.get(i).setTime(startTime);
-            truckTasks.get(i).addTask(remainingTasks.get(0), orders.getTasks().get(remainingTasks.get(0)).getExecutionTime(), orders.getTasks().get(remainingTasks.get(0)).getL());
-            remainingTasks.remove(0);
+            int firstTruckTask = orders.getTaskWithMaxExecTime(remainingTasks);
+            truckTasks.get(i).addTask(remainingTasks.get(firstTruckTask), orders.getTasks().get(remainingTasks.get(firstTruckTask)).getExecutionTime(), orders.getTasks().get(remainingTasks.get(firstTruckTask)).getL());
+            remainingTasks.remove(firstTruckTask);
         }
         for (int i = 0; i < remainingTasks.size() && availableTrucks.size() != 0; ) {
             int indexOfAvailableTruckWithMinTime = 0;
@@ -62,7 +64,7 @@ public class DayPlanning {
                     indexOfAvailableTruckWithMinTime = j;
                 }
             }
-            int index = orders.getNearestTaskFromOrderWithMinNumber(truckTasks.get(availableTrucks.get(indexOfAvailableTruckWithMinTime)).getLastTask(), truckTasks.get(availableTrucks.get(indexOfAvailableTruckWithMinTime)).getFinishTime(), remainingTasks);
+            int index = orders.getTaskWithMaxExecTime(truckTasks.get(availableTrucks.get(indexOfAvailableTruckWithMinTime)).getLastTask(), truckTasks.get(availableTrucks.get(indexOfAvailableTruckWithMinTime)).getFinishTime(), remainingTasks);
             if (index == -1) {
                 availableTrucks.remove(indexOfAvailableTruckWithMinTime);
             }
@@ -88,8 +90,9 @@ public class DayPlanning {
             truckTasks.add(new TruckTasks());
             Time startTime = new Time (0);
             truckTasks.get(i).setTime(startTime);
-            truckTasks.get(i).addTask(remainingTasks.get(0), orders.getTasks().get(remainingTasks.get(0)).getExecutionTime(), orders.getTasks().get(remainingTasks.get(0)).getL());
-            remainingTasks.remove(0);
+            int firstTruckTask = orders.getTaskWithMaxExecTime(remainingTasks);
+            truckTasks.get(i).addTask(remainingTasks.get(firstTruckTask), orders.getTasks().get(remainingTasks.get(firstTruckTask)).getExecutionTime(), orders.getTasks().get(remainingTasks.get(firstTruckTask)).getL());
+            remainingTasks.remove(firstTruckTask);
             while (remainingTasks.size() != 0 && truckTasks.get(i).getFinishTime().getTime() < deadlineOfLastTask.getTime()) {
                 int index = orders.getNearestTask(truckTasks.get(i).getLastTask(), truckTasks.get(i).getFinishTime(), remainingTasks);
                 if (index == -1) {
@@ -101,15 +104,26 @@ public class DayPlanning {
             }
         }
         int numberOfTrucks = truckTasks.size();
-     //   while (! divideTasksToKTrucks(numberOfTrucks)) 
-     //   {
-     //       numberOfTrucks++;
-     //   }
+        while (! divideTasksToKTrucks(numberOfTrucks)) 
+        {
+            numberOfTrucks++;
+        }
+    }
+    
+    private void writeToLOG(){
+        Logger logger = Logger.getLogger("Test");
+        
+        //tasks
+        logger.info(I18n.TRUCKS_INFO);
+        for(int i = 0; i < truckTasks.size(); i++){
+            logger.info( (i+1) + " " + I18n.TRUCK + ": " + truckTasks.get(i).toString());
+        }
     }
     
     public void writeIntoFile(String filename) {
+        writeToLOG();
         BufferedWriter writer = null;
-        Time startTime = new Time (0);
+        //Time startTime = new Time (0);
         Warehouse warehouse = Warehouse.getInstance();
         try {
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1251"));
@@ -132,7 +146,7 @@ public class DayPlanning {
             
             Long[] totalTrucksTime = new Long[truckTasks.size()];
             for (int i = 0; i < truckTasks.size(); i++) {
-                totalTrucksTime[i] = (truckTasks.get(i).getFinishTime().getTime() - startTime.getTime()) / 1000;
+                totalTrucksTime[i] = (truckTasks.get(i).getFinishTime().getTime()) / 1000;
             }
             Long[] distanceTrucksTime = new Long[truckTasks.size()];
             for (int i = 0; i < truckTasks.size(); i++) {

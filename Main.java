@@ -28,8 +28,7 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
-        DayPlanning dayPlanning = new DayPlanning();
+    	DayPlanning dayPlanning = new DayPlanning();
         dayPlanning.divideTasksToTrucks();
         dayPlanning.writeIntoFile("Result.csv");
     }

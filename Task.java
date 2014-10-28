@@ -18,6 +18,23 @@ public class Task {
 		this.l = 0;
 	};
 	
+	public String toString() {
+	    StringBuffer strbuf = new StringBuffer("[" + I18n.TASK_EXECUTION_TIME + ": " + 
+	            executionTime + "; " + I18n.TASK_SHELFS + ": [");
+	    if (items.size() == 0) {
+	        strbuf.append("]]");
+	        return strbuf.toString();
+	    }
+	    Warehouse warehouse = Warehouse.getInstance();
+	    strbuf.append(warehouse.getNameByIndex(items.get(0).getIndex()) + ": " + items.get(0).getVolume());
+	    for (int i = 1; i < items.size(); i++) {
+	        strbuf.append("; " + warehouse.getNameByIndex(items.get(i).getIndex()) + ": " +
+	                items.get(i).getVolume());
+	    }
+	    strbuf.append("]]");
+	    return strbuf.toString();
+	}
+	
 	Task(Task t){
 		this.deadline = new Time(t.getDeadline().getTime());
 		this.executionTime = new Time(t.getExecutionTime().getTime());

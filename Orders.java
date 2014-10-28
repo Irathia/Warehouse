@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.TimeZone;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -160,7 +161,8 @@ public class Orders {
 			for (int j = 0; j < t.size(); j++){
 				tasks.add(t.get(j));
 			}
-		}
+			System.out.println(orders.get(i).getIndexOfShop() + " " + tasks.size());
+	    }
 	}
 	
 	public final Order getOrder(int index)
@@ -184,8 +186,10 @@ public class Orders {
 	}
 	
 	public final int getNearestTask(int indexOfPreviousTask, Time current, ArrayList <Integer> remaining) {
-		int finish = tasks.get(indexOfPreviousTask).getFinish();
-		
+	    if (remaining.size() == 0) {
+            return -1;
+        }
+	    int finish = tasks.get(indexOfPreviousTask).getFinish();
 		int minIndex = -1;
 		double minDistance = Double.POSITIVE_INFINITY;
 		Time deadline = tasks.get(remaining.get(0)).getDeadline();
@@ -205,6 +209,49 @@ public class Orders {
 		return minIndex;
 	}
 	
+	public final int getTaskWithMaxExecTime(ArrayList <Integer> remaining) {
+        if (remaining.size() == 0) {
+            return -1;
+        }
+	    
+        int indexOfTaskWithMaxTime = 0;
+        Time deadline = tasks.get(remaining.get(indexOfTaskWithMaxTime)).getDeadline();
+        int i = 1;
+        while (i < remaining.size() && tasks.get(remaining.get(i)).getDeadline().getTime() == deadline.getTime())
+        {
+            if (tasks.get(remaining.get(indexOfTaskWithMaxTime)).getExecutionTime().getTime() < tasks.get(remaining.get(i)).getExecutionTime().getTime())
+            {
+                indexOfTaskWithMaxTime = i;
+            }
+            i++;
+        }
+        return indexOfTaskWithMaxTime;
+    }
+	
+    public final int getTaskWithMaxExecTime(int indexOfPreviousTask, Time current, ArrayList <Integer> remaining) {
+        if (remaining.size() == 0) {
+            return -1;
+        }
+        int indexOfTaskWithMaxTime = -1;
+        Time maxTime = new Time(0);
+        Time deadline = tasks.get(remaining.get(0)).getDeadline();
+        for (int i = 0; i < remaining.size(); i++){
+            while (i < remaining.size() && tasks.get(remaining.get(i)).getDeadline().getTime() == deadline.getTime()){
+                if (maxTime.getTime() < tasks.get(remaining.get(i)).getExecutionTime().getTime()
+                        && tasks.get(remaining.get(i)).getExecutionTime().getTime() + current.getTime() + getTimeForMovingBetweenTasks(indexOfPreviousTask,remaining.get(i)).getTime() <= deadline.getTime()) {
+                    indexOfTaskWithMaxTime = i;
+                    maxTime = tasks.get(remaining.get(i)).getExecutionTime();
+                }
+                i++;
+            }
+            if (indexOfTaskWithMaxTime != -1 || i == remaining.size()) { break; }
+            deadline = tasks.get(remaining.get(i)).getDeadline();
+            i--;
+        }
+        
+        return indexOfTaskWithMaxTime;
+    }
+
 	private int lastTaskIndexOfOrder(int taskIndex) {
 	    int lastIndexOfTask = -1;
 	    for (int i = 1; i < indexOfFirstOrderTask.size(); i++) {
@@ -218,31 +265,6 @@ public class Orders {
         }
 	    return lastIndexOfTask;
 	}
-	
-	public final int getNearestTaskFromOrderWithMinNumber(int indexOfPreviousTask, Time current, ArrayList <Integer> remaining) {
-        if (remaining.size() < 1) { return -1; }
-	    //int finish = tasks.get(indexOfPreviousTask).getFinish();
-        //int lastIndexOfMinOrder = lastTaskIndexOfOrder(remaining.get(0));
-        
-        int curIndex = -1;
-        Time maxExecutionTimeDistance = new Time(0);
-        Time deadline = tasks.get(remaining.get(0)).getDeadline();
-        for (int i = 0; i < remaining.size(); i++) { 
-            while (i < remaining.size() && tasks.get(remaining.get(i)).getDeadline().getTime() == deadline.getTime()){
-                long allTime = tasks.get(remaining.get(i)).getExecutionTime().getTime() + current.getTime() + getTimeForMovingBetweenTasks(indexOfPreviousTask, remaining.get(i)).getTime();
-                if ( (allTime) <= tasks.get(remaining.get(i)).getDeadline().getTime()
-                        && (tasks.get(remaining.get(i)).getExecutionTime().getTime() > maxExecutionTimeDistance.getTime())){
-                    maxExecutionTimeDistance = tasks.get(remaining.get(i)).getExecutionTime();
-                    curIndex = i;
-                }
-                i++;
-            }
-            if (curIndex != -1 || i == remaining.size()) { break; }
-            deadline = tasks.get(remaining.get(i)).getDeadline();
-            i--;
-        }
-        return curIndex;
-    }
 	
 	public Time getTimeForMovingBetweenTasks(int firstTask, int secondTask) {
 	    Warehouse warehouse = Warehouse.getInstance();
@@ -307,7 +329,13 @@ public class Orders {
     }
     
     public void writeToLOG(){
-    	Logger logger = Logger.getLogger("Test");
+        Logger logger = Logger.getLogger("Test");
+    	
+    	//tasks
+    	logger.info(I18n.TASKS_INFO);
+    	for(int i = 0; i < tasks.size(); i++){
+            logger.info( (i+1) + " " + I18n.TASK + ": " + tasks.get(i).toString());
+        }
     	
     	//delivery
     	logger.info(I18n.DELIVERY);

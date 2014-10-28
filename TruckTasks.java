@@ -22,6 +22,20 @@ public class TruckTasks {
         return indexOfTasks.size();
     }
     
+    public String toString() {
+        StringBuffer strbuf = new StringBuffer("[");
+        if (indexOfTasks.size() == 0) {
+            strbuf.append("]");
+            return strbuf.toString();
+        }
+        strbuf.append( (indexOfTasks.get(0) + 1) );
+        for (int i = 1; i < indexOfTasks.size(); i++) {
+            strbuf.append("; " + (indexOfTasks.get(i) + 1));
+        }
+        strbuf.append("]");
+        return strbuf.toString();
+    }
+    
     public int getTruckTask(int indexOfTruckTask) {
         if (indexOfTruckTask < 0 || indexOfTruckTask >= indexOfTasks.size()) {
             return -1;
