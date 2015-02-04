@@ -92,19 +92,42 @@ public class Order implements Comparable<Order>{
 		}
 		Vector <OrderItem> oi = new Vector<OrderItem> (items);
 		double volumeOfAllGoodsInContainer = 0;
+		double volumeOfAllGoodsInLastTask = 0;
 		int i = 0;
+		boolean flag = false;
 		for (int j = 0; j < oi.size(); j++) {
 		    double volume = oi.get(j).getVolume();
 		    if (volumeOfAllGoodsInContainer + volume > maximumVolumeOfTruck) {
-		        Task t = new Task(deadline);
+		    	Task t;
+		    	if (flag == true){
+		    		flag = false;
+		    		volumeOfAllGoodsInLastTask = 0;
+		    		t = new Task(tasks.get(tasks.size()-1));
+		    		tasks.remove(tasks.get(tasks.size()-1));
+		    	}
+		    	else{
+		    		t = new Task(deadline);
+		    	}
+		        
 		        for (;i < j;i++) {
-		            t.addItem(oi.get(i));
+		        	if (t.getItems().size() != 0 && t.getItem(t.getItems().size()-1).getIndex() == oi.get(i).getIndex()){
+		        		t.getItem(t.getItems().size()-1).setVolume(t.getItem(t.getItems().size()-1).getVolume() + oi.get(i).getVolume());
+		        	}
+		        	else{
+		        		t.addItem(oi.get(i));
+		        	}
 		        }
 		        if (volumeOfAllGoodsInContainer != maximumVolumeOfTruck) {
 		            
                     //boxes
                     int nOfBoxes = oi.get(j).getNumberOfBoxes(maximumVolumeOfTruck - volumeOfAllGoodsInContainer,true);
-                    t.addItem(new OrderItem(oi.get(j)));
+                    if (t.getItems().size() != 0 && t.getItem(t.getItems().size()-1).getIndex() == oi.get(j).getIndex()){
+                    	t.getItem(t.getItems().size()-1).setVolume(t.getItem(t.getItems().size()-1).getVolume() + oi.get(j).getVolume());
+                    }
+                    else{
+                    	t.addItem(new OrderItem(oi.get(j)));
+                    }
+                    
                     t.getItem(t.getSize()-1).setVolume(nOfBoxes*oi.get(j).getLiters());
 		            oi.get(j).setVolume(volume - nOfBoxes*oi.get(j).getLiters());
 	            }
@@ -115,12 +138,15 @@ public class Order implements Comparable<Order>{
                     t.setFinish(Warehouse.getInstance().getNearestSouthDelivery(t.getItem(t.getSize()-1).getIndex()));
                 }
 		        t.setStart();
+		        
 		        tasks.add(t);
 		        tasks.get(tasks.size()-1).calculateExecutionTime();
 		        if (tasks.get(tasks.size()-1).getExecutionTime().getTime() > hour.getTime()){
 		        	divideTask();
+		        	volumeOfAllGoodsInLastTask = tasks.get(tasks.size()-1).getV();
+		        	flag = true;
 		        }
-                volumeOfAllGoodsInContainer = 0;
+                volumeOfAllGoodsInContainer = volumeOfAllGoodsInLastTask;
                 i = j+1;
                 if (oi.get(j).getVolume() != 0){
                 	i = j;
@@ -135,7 +161,12 @@ public class Order implements Comparable<Order>{
 		if (i < oi.size()) {
 		    Task t = new Task(deadline);
 		    for (;i < oi.size();i++) {
-                t.addItem(oi.get(i));
+		    	if (t.getItems().size() != 0 && t.getItem(t.getItems().size()-1).getIndex() == oi.get(i).getIndex()){
+	        		t.getItem(t.getItems().size()-1).setVolume(t.getItem(t.getItems().size()-1).getVolume() + oi.get(i).getVolume());
+	        	}
+	        	else{
+	        		t.addItem(oi.get(i));
+	        	}
             }
 		    if (deliverySide == Expedition.North) {
                 t.setFinish(Warehouse.getInstance().getNearestNorthDelivery(t.getItem(t.getSize()-1).getIndex()));//get finish point

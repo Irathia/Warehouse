@@ -17,5 +17,5 @@ public class I18n {
     public static final String TASK = "задание";
     public static final String TIMES = " раз(а)";
     public static final String TASK_EXECUTION_TIME = "Время выполнения задания";
-    public static final String TASK_SHELFS = "Посященные ячейки";
+    public static final String TASK_SHELFS = "Посещенные ячейки";
 }

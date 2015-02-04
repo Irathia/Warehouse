@@ -76,6 +76,14 @@ public class Task {
         return items.size();
     }
 
+    public double getV(){
+		double volume = 0;
+		for(int i = 0; i < items.size(); i++){
+			volume += items.get(i).getVolume();
+		}
+		return volume;
+	}
+	
 	public void addItem(OrderItem value){
 		items.add(value);
 	};
