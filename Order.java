@@ -101,11 +101,13 @@ public class Order implements Comparable<Order>{
 		    	Task t;
 		    	if (flag == true){
 		    		flag = false;
+		    		//volumeOfAllGoodsInContainer = volumeOfAllGoodsInLastTask;
 		    		volumeOfAllGoodsInLastTask = 0;
 		    		t = new Task(tasks.get(tasks.size()-1));
 		    		tasks.remove(tasks.get(tasks.size()-1));
 		    	}
 		    	else{
+		    		//volumeOfAllGoodsInLastTask = 0;
 		    		t = new Task(deadline);
 		    	}
 		        
@@ -121,14 +123,16 @@ public class Order implements Comparable<Order>{
 		            
                     //boxes
                     int nOfBoxes = oi.get(j).getNumberOfBoxes(maximumVolumeOfTruck - volumeOfAllGoodsInContainer,true);
+                    double previousVolume = 0;
                     if (t.getItems().size() != 0 && t.getItem(t.getItems().size()-1).getIndex() == oi.get(j).getIndex()){
+                    	previousVolume = t.getItem(t.getItems().size()-1).getVolume();
                     	t.getItem(t.getItems().size()-1).setVolume(t.getItem(t.getItems().size()-1).getVolume() + oi.get(j).getVolume());
                     }
                     else{
                     	t.addItem(new OrderItem(oi.get(j)));
                     }
                     
-                    t.getItem(t.getSize()-1).setVolume(nOfBoxes*oi.get(j).getLiters());
+                    t.getItem(t.getSize()-1).setVolume(nOfBoxes*oi.get(j).getLiters() + previousVolume);
 		            oi.get(j).setVolume(volume - nOfBoxes*oi.get(j).getLiters());
 	            }
 		        if (deliverySide == Expedition.North) {
@@ -141,6 +145,7 @@ public class Order implements Comparable<Order>{
 		        
 		        tasks.add(t);
 		        tasks.get(tasks.size()-1).calculateExecutionTime();
+		        
 		        if (tasks.get(tasks.size()-1).getExecutionTime().getTime() > hour.getTime()){
 		        	divideTask();
 		        	volumeOfAllGoodsInLastTask = tasks.get(tasks.size()-1).getV();
@@ -182,12 +187,10 @@ public class Order implements Comparable<Order>{
 	        }
         }
 		
-	/*	for(int j = 0; j < tasks.size(); j++){
+		for(int j = 0; j < tasks.size(); j++){
 			//tasks.get(j).calculateExecutionTime();
-			Calendar cal = Calendar.getInstance();
-			cal.setTimeInMillis(tasks.get(j).getExecutionTime().getTime());
-			System.out.println(cal.getTime());
-		}*/
+			tasks.get(j).calculateExecutionTime();
+		}
 	};
 	
 	public final Time executionTimeOfAllTasks()	{
@@ -262,7 +265,17 @@ public class Order implements Comparable<Order>{
 						i++;
 					}
 					else{
-						t1.deleteItem(t1.getSize()-1);
+						int index = t1.getItems().size()-1;
+						
+						//t1.deleteItem(t1.getSize()-1);
+						//double volume = t1.getV();
+						//t1.addItem(new OrderItem(t.getItem(j)));
+						int ab = t1.getItem(index).getNumberOfBoxes(t1.getItem(index).getVolume(),false);
+					
+						int boxes = (int)Math.max(0,(int)Math.floor((h.getTime() - (t1.getExecutionTime().getTime() - ab*Warehouse.getInstance().getTimeOfRestacking()*1000))/(Warehouse.getInstance().getTimeOfRestacking()*1000)));
+						
+						t1.getItem(index).setVolume(boxes*t1.getItem(index).getLiters());
+						t.getItem(j).setVolume(t.getItem(j).getVolume() - boxes*t1.getItem(index).getLiters());
 						if (deliverySide == Expedition.North) {
 			                t1.setFinish(Warehouse.getInstance().getNearestNorthDelivery(t1.getItem(t1.getSize()-1).getIndex()));//get finish point
 			            }
@@ -272,6 +285,16 @@ public class Order implements Comparable<Order>{
 						t1.calculateExecutionTime();
 						tasks.add(t1);
 						i++;
+						/*t1.deleteItem(t1.getSize()-1);
+						if (deliverySide == Expedition.North) {
+			                t1.setFinish(Warehouse.getInstance().getNearestNorthDelivery(t1.getItem(t1.getSize()-1).getIndex()));//get finish point
+			            }
+			            else {
+			                t1.setFinish(Warehouse.getInstance().getNearestSouthDelivery(t1.getItem(t1.getSize()-1).getIndex()));
+			            }
+						t1.calculateExecutionTime();
+						tasks.add(t1);
+						i++;*/
 					}
 					flag = true;
 					break;
