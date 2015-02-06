@@ -96,21 +96,20 @@ public class Order implements Comparable<Order>{
 		int i = 0;
 		boolean flag = false;
 		for (int j = 0; j < oi.size(); j++) {
+			//if (tasks.size() > 80)
+			//	System.out.println("g");
 		    double volume = oi.get(j).getVolume();
 		    if (volumeOfAllGoodsInContainer + volume > maximumVolumeOfTruck) {
 		    	Task t;
 		    	if (flag == true){
-		    		flag = false;
-		    		//volumeOfAllGoodsInContainer = volumeOfAllGoodsInLastTask;
 		    		volumeOfAllGoodsInLastTask = 0;
 		    		t = new Task(tasks.get(tasks.size()-1));
 		    		tasks.remove(tasks.get(tasks.size()-1));
 		    	}
 		    	else{
-		    		//volumeOfAllGoodsInLastTask = 0;
 		    		t = new Task(deadline);
 		    	}
-		        
+		    	flag = false;
 		        for (;i < j;i++) {
 		        	if (t.getItems().size() != 0 && t.getItem(t.getItems().size()-1).getIndex() == oi.get(i).getIndex()){
 		        		t.getItem(t.getItems().size()-1).setVolume(t.getItem(t.getItems().size()-1).getVolume() + oi.get(i).getVolume());
@@ -164,6 +163,7 @@ public class Order implements Comparable<Order>{
             }
 		}
 		if (i < oi.size()) {
+			
 		    Task t = new Task(deadline);
 		    for (;i < oi.size();i++) {
 		    	if (t.getItems().size() != 0 && t.getItem(t.getItems().size()-1).getIndex() == oi.get(i).getIndex()){
@@ -186,11 +186,6 @@ public class Order implements Comparable<Order>{
 	        	divideTask();
 	        }
         }
-		
-		for(int j = 0; j < tasks.size(); j++){
-			//tasks.get(j).calculateExecutionTime();
-			tasks.get(j).calculateExecutionTime();
-		}
 	};
 	
 	public final Time executionTimeOfAllTasks()	{
@@ -247,35 +242,19 @@ public class Order implements Comparable<Order>{
 	                t1.setFinish(Warehouse.getInstance().getNearestSouthDelivery(t1.getItem(t1.getSize()-1).getIndex()));
 	            }
 				t1.calculateExecutionTime();
-				if (t1.getExecutionTime().getTime() > h.getTime()){
-					if(t1.getSize() == 1){
-						int ab = t1.getItem(0).getNumberOfBoxes(t1.getItem(0).getVolume(),false);
-						int boxes = (int)Math.floor((h.getTime() - (t1.getExecutionTime().getTime() - ab*Warehouse.getInstance().getTimeOfRestacking()*1000))/(Warehouse.getInstance().getTimeOfRestacking()*1000));
-						
-						t1.getItem(0).setVolume(boxes*t1.getItem(0).getLiters());
-						t.getItem(j).setVolume(t.getItem(j).getVolume() - boxes*t1.getItem(0).getLiters());
-						if (deliverySide == Expedition.North) {
-			                t1.setFinish(Warehouse.getInstance().getNearestNorthDelivery(t1.getItem(t1.getSize()-1).getIndex()));//get finish point
-			            }
-			            else {
-			                t1.setFinish(Warehouse.getInstance().getNearestSouthDelivery(t1.getItem(t1.getSize()-1).getIndex()));
-			            }
-						t1.calculateExecutionTime();
-						tasks.add(t1);
-						i++;
-					}
-					else{
+				if (t1.getExecutionTime().getTime() >= h.getTime()){
 						int index = t1.getItems().size()-1;
-						
-						//t1.deleteItem(t1.getSize()-1);
-						//double volume = t1.getV();
-						//t1.addItem(new OrderItem(t.getItem(j)));
-						int ab = t1.getItem(index).getNumberOfBoxes(t1.getItem(index).getVolume(),false);
+						int the_number_of_boxes_for_full_volume = t1.getItem(index).getNumberOfBoxes(t1.getItem(index).getVolume(),false);
 					
-						int boxes = (int)Math.max(0,(int)Math.floor((h.getTime() - (t1.getExecutionTime().getTime() - ab*Warehouse.getInstance().getTimeOfRestacking()*1000))/(Warehouse.getInstance().getTimeOfRestacking()*1000)));
+						int boxes = (int)Math.max(0, (int)Math.floor((h.getTime() - (t1.getExecutionTime().getTime() - the_number_of_boxes_for_full_volume*Warehouse.getInstance().getTimeOfRestacking()*1000))/(Warehouse.getInstance().getTimeOfRestacking()*1000)));
+						if (boxes == 0){
+							t1.getItems().remove(index);
+						}
+						else{
+							t1.getItem(index).setVolume(boxes*t1.getItem(index).getLiters());
+							t.getItem(j).setVolume(t.getItem(j).getVolume() - boxes*t1.getItem(index).getLiters());
+						}
 						
-						t1.getItem(index).setVolume(boxes*t1.getItem(index).getLiters());
-						t.getItem(j).setVolume(t.getItem(j).getVolume() - boxes*t1.getItem(index).getLiters());
 						if (deliverySide == Expedition.North) {
 			                t1.setFinish(Warehouse.getInstance().getNearestNorthDelivery(t1.getItem(t1.getSize()-1).getIndex()));//get finish point
 			            }
@@ -285,19 +264,8 @@ public class Order implements Comparable<Order>{
 						t1.calculateExecutionTime();
 						tasks.add(t1);
 						i++;
-						/*t1.deleteItem(t1.getSize()-1);
-						if (deliverySide == Expedition.North) {
-			                t1.setFinish(Warehouse.getInstance().getNearestNorthDelivery(t1.getItem(t1.getSize()-1).getIndex()));//get finish point
-			            }
-			            else {
-			                t1.setFinish(Warehouse.getInstance().getNearestSouthDelivery(t1.getItem(t1.getSize()-1).getIndex()));
-			            }
-						t1.calculateExecutionTime();
-						tasks.add(t1);
-						i++;*/
-					}
-					flag = true;
-					break;
+						flag = true;
+						break;
 				}
 				
 			}

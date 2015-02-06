@@ -39,10 +39,10 @@ public class OrderItem implements Comparable<OrderItem>{
 
     public final int getNumberOfBoxes(double v, boolean floor){
     	if (floor == true){
-    		return (int) Math.floor(v/liters);
+    		return (int)Math.floor((long)v/liters);
     	}
     	else{
-    		return (int)  Math.ceil(v/liters);
+    		return (int)Math.ceil((long)v/liters);
     	}
     }
 
