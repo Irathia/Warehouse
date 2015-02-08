@@ -209,7 +209,7 @@ public class Orders {
 		return minIndex;
 	}
 	
-	public final int getTaskWithMaxExecTime(ArrayList <Integer> remaining) {
+	public final int getTaskWithMaxExecTime(Time start, ArrayList <Integer> remaining) {
         if (remaining.size() == 0) {
             return -1;
         }
@@ -224,6 +224,13 @@ public class Orders {
                 indexOfTaskWithMaxTime = i;
             }
             i++;
+        }
+        long startL = start.getTime();
+        long executionL = tasks.get(remaining.get(indexOfTaskWithMaxTime)).getExecutionTime().getTime();
+        long deadlineL = tasks.get(remaining.get(indexOfTaskWithMaxTime)).getDeadline().getTime();
+        
+        if (startL + executionL  > deadlineL) {
+            return -1;
         }
         return indexOfTaskWithMaxTime;
     }

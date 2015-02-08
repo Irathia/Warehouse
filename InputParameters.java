@@ -19,6 +19,7 @@ public class InputParameters {
     private Time startOfWork;
     private Time startOfBreak;
     private Time finishOfBreak;
+    private long maximumOrderExecutionTime; // seconds
     
     public InputParameters() {
         speed = 0;
@@ -26,6 +27,11 @@ public class InputParameters {
         timeOfPreparingForDelivery = 0;
         timeOfLabeling = 0;
         truckCapacity = 0;
+        maximumOrderExecutionTime = 0;
+    }
+    
+    public long getMaximumOrderExecutionTime() {
+        return maximumOrderExecutionTime;
     }
     
     public double getTruckCapacity() {
@@ -95,6 +101,8 @@ public class InputParameters {
             truckCapacity = readDouble(br);
             speed = readDouble(br);
             speed /= 3.6;
+            double tmp = readDouble(br);
+            maximumOrderExecutionTime = (long) (tmp * 1000);
             timeOfRestacking = readDouble(br);
             timeOfPreparingEmptyContainer = readDouble(br);
             timeOfPreparingForDelivery = readDouble(br);

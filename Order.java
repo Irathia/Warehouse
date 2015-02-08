@@ -82,14 +82,6 @@ public class Order implements Comparable<Order>{
 	};
 	
 	public void divideOrderToTasks() {
-		Time hour = new Time(0);
-		DateFormat formatter = new SimpleDateFormat("HH:mm");
-		try {
-			hour.setTime(formatter.parse("01:00").getTime());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		Vector <OrderItem> oi = new Vector<OrderItem> (items);
 		double volumeOfAllGoodsInContainer = 0;
 		double volumeOfAllGoodsInLastTask = 0;
@@ -145,7 +137,7 @@ public class Order implements Comparable<Order>{
 		        tasks.add(t);
 		        tasks.get(tasks.size()-1).calculateExecutionTime();
 		        
-		        if (tasks.get(tasks.size()-1).getExecutionTime().getTime() > hour.getTime()){
+		        if (tasks.get(tasks.size()-1).getExecutionTime().getTime() > Warehouse.getInstance().getMaximumOrderExecutionTime()){
 		        	divideTask();
 		        	volumeOfAllGoodsInLastTask = tasks.get(tasks.size()-1).getV();
 		        	flag = true;
@@ -182,7 +174,7 @@ public class Order implements Comparable<Order>{
             t.setStart();
             tasks.add(t);
             tasks.get(tasks.size()-1).calculateExecutionTime();
-            if (tasks.get(tasks.size()-1).getExecutionTime().getTime() > hour.getTime()){
+            if (tasks.get(tasks.size()-1).getExecutionTime().getTime() > Warehouse.getInstance().getMaximumOrderExecutionTime()){
 	        	divideTask();
 	        }
         }
@@ -212,15 +204,8 @@ public class Order implements Comparable<Order>{
 	private void divideTask(){
 		Task t = new Task(tasks.get(tasks.size()-1));
 		tasks.remove(tasks.size()-1);
-		Time h = new Time(0);
-		DateFormat formatter = new SimpleDateFormat("HH:mm");
-		try {
-			h.setTime(formatter.parse("01:00").getTime());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		int numberOfTasks = (int)Math.ceil((double)t.getExecutionTime().getTime()/(double)h.getTime());
+		long maxExecutionTime = Warehouse.getInstance().getMaximumOrderExecutionTime();
+		int numberOfTasks = (int)Math.ceil((double)t.getExecutionTime().getTime()/(double)maxExecutionTime);
 		int i = 0;
 		int j = 0;
 		boolean flag = false;
@@ -242,11 +227,11 @@ public class Order implements Comparable<Order>{
 	                t1.setFinish(Warehouse.getInstance().getNearestSouthDelivery(t1.getItem(t1.getSize()-1).getIndex()));
 	            }
 				t1.calculateExecutionTime();
-				if (t1.getExecutionTime().getTime() >= h.getTime()){
+				if (t1.getExecutionTime().getTime() >= maxExecutionTime){
 						int index = t1.getItems().size()-1;
 						int the_number_of_boxes_for_full_volume = t1.getItem(index).getNumberOfBoxes(t1.getItem(index).getVolume(),false);
 					
-						int boxes = (int)Math.max(0, (int)Math.floor((h.getTime() - (t1.getExecutionTime().getTime() - the_number_of_boxes_for_full_volume*Warehouse.getInstance().getTimeOfRestacking()*1000))/(Warehouse.getInstance().getTimeOfRestacking()*1000)));
+						int boxes = (int)Math.max(0, (int)Math.floor((maxExecutionTime - (t1.getExecutionTime().getTime() - the_number_of_boxes_for_full_volume*Warehouse.getInstance().getTimeOfRestacking()*1000))/(Warehouse.getInstance().getTimeOfRestacking()*1000)));
 						if (boxes == 0){
 							t1.getItems().remove(index);
 						}
