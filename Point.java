@@ -14,7 +14,7 @@ public class Point {
         this.y = y;
     }
     
-    public Point(String x, String y) {
+    public Point(String x, String y) throws Exception {
         this.x = Double.parseDouble(x);
         this.y = Double.parseDouble(y);
     }

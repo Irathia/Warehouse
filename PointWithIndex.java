@@ -13,7 +13,7 @@ public class PointWithIndex extends Point {
         this.index = index;
     }
     
-    public PointWithIndex(String x, String y) {
+    public PointWithIndex(String x, String y) throws Exception {
         super(x,y);
         this.index = -1;
     }

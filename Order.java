@@ -1,12 +1,7 @@
 package Warehouse;
 
 import java.sql.Time;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Vector;
-import java.util.logging.Logger;
 
 public class Order implements Comparable<Order>{
 	private long indexOfShop;

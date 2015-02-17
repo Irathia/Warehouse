@@ -233,19 +233,27 @@ public class Warehouse extends InputParameters{
         }
     }
     
-    private void readExpedition(BufferedReader br, Expedition exp) throws IOException {
+    private int readExpedition(BufferedReader br, Expedition exp, String filename, int lineCounter) throws Exception {
         String line = br.readLine();
+        lineCounter++;
         String [] elements = line.split("[\";]");
         while (elements.length <= 1 || !(elements[0].startsWith("(") && elements[1].endsWith(")"))) {
             line = br.readLine();
-            if (line == null) { throw new IOException("Wrong format of Warehouse file");}
+            lineCounter++;
+            if (line == null) { throw new Exception(I18n.wrongFormatOfFile(filename));}
             elements = line.replace("\"","").split(";");
         }
         for (int i = 0; i < (elements.length - 1) && elements[i].startsWith("(") && elements[i + 1].endsWith(")"); i+=2) {
             String x = elements[i].replace(",", ".").substring(1);
             String y = elements[i+1].replace(",", ".");
             y = y.substring(0, y.length() - 1);
-            Point tmp = new Point(x, y);
+            Point tmp; 
+            try {
+                tmp = new Point(x, y);
+            }
+            catch (Exception e) {
+                throw new Exception(I18n.wrongFormatOfFile(filename) + "\n" + I18n.WRONG_COORDINATES + I18n.wrongCell(lineCounter, i+1, filename));
+            }
             if (exp == Expedition.North) {
                 northDelivery.add(tmp);
             }
@@ -253,60 +261,81 @@ public class Warehouse extends InputParameters{
                 southDelivery.add(tmp);
             }
         }
+        return lineCounter;
     }
     
-    private void readShelfs(BufferedReader br, int numberOfRows) throws IOException {
+    private void readShelfs(BufferedReader br, int numberOfRows, String filename, int lineCounter) throws Exception {
         String line = br.readLine();
-        if (line == null) {throw new IOException("Wrong format of Warehouse file");}
+        lineCounter++;
+        if (line == null) {throw new Exception(I18n.wrongFormatOfFile(filename));}
         String [] elements = line.split(";");
-        if (elements.length < numberOfRows ) {throw new IOException("Wrong format of Warehouse file");}
+        if (elements.length < numberOfRows ) {throw new Exception(I18n.wrongFormatOfFile(filename));}
         
         line = br.readLine();
-        if (line == null) {throw new IOException("Wrong format of Warehouse file");}
+        lineCounter++;
+        if (line == null) {throw new Exception(I18n.wrongFormatOfFile(filename));}
         elements = line.split(";");
-        if (elements.length < (numberOfRows + 1)) {throw new IOException("Wrong format of Warehouse file");}
+        if (elements.length < (numberOfRows + 1)) {throw new Exception(I18n.wrongFormatOfFile(filename));}
         int [] numberOfShelfsInRow = new int [numberOfRows];
         int i = 0;
         for (i = 0; i < numberOfRows; i++) {
-            numberOfShelfsInRow[i] = Integer.parseInt(elements[i+1]);
+            try {
+                numberOfShelfsInRow[i] = Integer.parseInt(elements[i+1]);
+            }
+            catch (Exception ex) {
+                throw new Exception(I18n.wrongFormatOfFile(filename) + "\n" + I18n.wrongNumberOfShelfs(i));
+            }
         }
         
         line = br.readLine();
-        if (line == null) {throw new IOException("Wrong format of Warehouse file");}
+        lineCounter++;
+        if (line == null) {throw new Exception(I18n.wrongFormatOfFile(filename));}
         elements = line.replace("\"","").split(";");
-        if (elements.length < (2*numberOfRows + 1)) {throw new IOException("Wrong format of Warehouse file");}
+        if (elements.length < (2*numberOfRows + 1)) {throw new Exception(I18n.wrongFormatOfFile(filename));}
         Point [] topLeft = new Point [numberOfRows];
         for (i = 0; i < numberOfRows && elements[2*i+1].startsWith("(") && elements[2*(i + 1)].endsWith(")"); i++) {
             String x = elements[2*i+1].replace(",", ".").substring(1);
             String y = elements[2*(i + 1)].replace(",", ".");
             y = y.substring(0, y.length() - 1);
-            topLeft[i] = new Point(x, y);
+            try {
+                topLeft[i] = new Point(x, y);
+            }
+            catch (Exception ex) {
+                throw new Exception(I18n.WRONG_COORDINATES + ". " + I18n.wrongCell(lineCounter, i+1, filename));
+            }
         }
-        if (i != numberOfRows) {throw new IOException("Wrong format of Warehouse file");}
+        if (i != numberOfRows) {throw new Exception(I18n.wrongFormatOfFile(filename));}
         
         line = br.readLine();
-        if (line == null) {throw new IOException("Wrong format of Warehouse file");}
+        lineCounter++;
+        if (line == null) {throw new Exception(I18n.wrongFormatOfFile(filename));}
         elements = line.replace("\"","").split(";");
-        if (elements.length < (2*numberOfRows + 1)) {throw new IOException("Wrong format of Warehouse file");}
+        if (elements.length < (2*numberOfRows + 1)) {throw new Exception(I18n.wrongFormatOfFile(filename));}
         Point [] bottomRight = new Point [numberOfRows];
         for (i = 0; i < numberOfRows && elements[2*i+1].startsWith("(") && elements[2*(i + 1)].endsWith(")"); i++) {
             String x = elements[2*i+1].replace(',', '.').substring(1);
             String y = elements[2*(i + 1)].replace(',', '.');
             y = y.substring(0, y.length() - 1);
-            bottomRight[i] = new Point(x, y);
+            try {
+                bottomRight[i] = new Point(x, y);
+            }
+            catch (Exception ex) {
+                throw new Exception(I18n.WRONG_COORDINATES + ". " + I18n.wrongCell(lineCounter, i+1, filename));
+            }
         }
-        if (i != numberOfRows) {throw new IOException("Wrong format of Warehouse file");}
+        if (i != numberOfRows) {throw new Exception(I18n.wrongFormatOfFile(filename));}
         double [] height = new double [numberOfRows];
         double [] width = new double [numberOfRows];
         for (i = 0; i < numberOfRows; i++) {
             if (topLeft[i].getY() < bottomRight[i].getY() || topLeft[i].getX() > bottomRight[i].getX()) {
-                throw new IOException("Check top-left and bottom-right points");
+                throw new Exception(I18n.wrongTop_LeftAndBottom_RightCoordinates(i+1));
             }
             height[i] = (topLeft[i].getY() - bottomRight[i].getY()) / numberOfShelfsInRow[i];
             width[i] = (bottomRight[i].getX() - topLeft[i].getX());
         }
         line = br.readLine();
-        if (line == null) {throw new IOException("Wrong format of Warehouse file");}
+        lineCounter++;
+        if (line == null) {throw new Exception(I18n.wrongFormatOfFile(filename));}
         int maxNumberOfShelfsInRow = numberOfShelfsInRow[0];
         for (i = 1; i < numberOfRows; i++) {
             if (maxNumberOfShelfsInRow < numberOfShelfsInRow[i]) {
@@ -316,12 +345,13 @@ public class Warehouse extends InputParameters{
         
         while (maxNumberOfShelfsInRow > 0) {
             line = br.readLine();
-            if (line == null) {throw new IOException("Wrong format of Warehouse file");}
+            lineCounter++;
+            if (line == null) {throw new Exception(I18n.wrongFormatOfFile(filename));}
             elements = line.split(";");
             i = 1;
             for (int j = 0; j < numberOfRows; j++) {
                 if (numberOfShelfsInRow[j] > 0) {
-                    if (i >= elements.length) {throw new IOException("Wrong format of Warehouse file");}
+                    if (i >= elements.length) {throw new Exception(I18n.wrongFormatOfFile(filename));}
                     if (pathways.getShelfIndex(elements[i]) != -1) {
                         i++;
                         continue;
@@ -329,10 +359,13 @@ public class Warehouse extends InputParameters{
                     Shelf sh = new Shelf(elements[i], topLeft[j].getX(), bottomRight[j].getY() + (height[j] * numberOfShelfsInRow[j]), width[j], height[j]);
                     pathways.add(j, sh);
                     if (sh.getName().toUpperCase().contains(I18n.EMPTY_CONTAINER)) {
-                        Point p = new Point((sh.getBottomRightX() - sh.getTopLeftX())/2, (sh.getTopLeftY() - sh.getBottomRightY())/2);
+                        Point p = new Point(sh.getTopLeftX() + (sh.getBottomRightX() - sh.getTopLeftX())/2, sh.getBottomRightY() + (sh.getTopLeftY() - sh.getBottomRightY())/2);
                         emptyContainers.add(p);
                     }
                     numberOfShelfsInRow[j]--;
+                }
+                else if (numberOfShelfsInRow[j] <= 0 && !elements[i].equals("")) {
+                    throw new Exception(I18n.wrongNumberOfShelfs(i, filename));
                 }
                 i++;
             }
@@ -341,18 +374,25 @@ public class Warehouse extends InputParameters{
         }
     }
     
-    public void readTopology(String filename) {
+    public void readTopology(String filename) throws Exception {
         clearAll();
         String line = "";
-        
+        int lineCounter = 0;
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(filename));
             line = br.readLine();
-            if (line == null) { throw new IOException("Wrong format of Warehouse file"); }
+            lineCounter++;
+            if (line == null) { throw new Exception(I18n.wrongFormatOfFile(filename)); }
             String [] elements = line.split(";");
-            if (elements.length < 2) { throw new IOException("Wrong format of Warehouse file"); }
-            int direction = Integer.parseInt(elements[1]); 
+            if (elements.length < 2) { throw new Exception(I18n.wrongFormatOfFile(filename)); }
+            int direction;
+            try {
+                direction = Integer.parseInt(elements[1]); 
+            }
+            catch (Exception e) {
+                throw new Exception(I18n.WRONG_WAREHOUSE_DIRECTION + I18n.errorLine(lineCounter, filename));
+            }
             switch (direction) {
                 case 0: 
                     pathways.setDirection(Direction.Down);
@@ -361,20 +401,25 @@ public class Warehouse extends InputParameters{
                     pathways.setDirection(Direction.Up);
                     break;
                 default:
-                    throw new IOException("Wrong format of Warehouse file");
+                    throw new Exception(I18n.wrongFormatOfFile(filename) + I18n.WRONG_WAREHOUSE_DIRECTION);
             }
-            readExpedition(br, Expedition.North);
-            readExpedition(br, Expedition.South);
+            lineCounter = readExpedition(br, Expedition.North, filename, lineCounter);
+            lineCounter = readExpedition(br, Expedition.South, filename, lineCounter);
             line = br.readLine();
-            if (line == null) { throw new IOException("Wrong format of Warehouse file"); }
+            lineCounter++;
+            if (line == null) { throw new Exception(I18n.wrongFormatOfFile(filename)); }
             elements = line.split(";");
-            if (elements.length < 2) { throw new IOException("Wrong format of Warehouse file"); }
-            int numberOfRows = Integer.parseInt(elements[1]); 
-            readShelfs(br, numberOfRows);
+            if (elements.length < 2) { throw new Exception(I18n.wrongFormatOfFile(filename)); }
+            int numberOfRows; 
+            try {
+                numberOfRows = Integer.parseInt(elements[1]); 
+            }
+            catch (Exception e) {
+                throw new Exception(I18n.wrongFormatOfFile(filename) + I18n.errorLine(lineCounter, filename));
+            }
+            readShelfs(br, numberOfRows, filename, lineCounter);
         } catch (FileNotFoundException e1) {
             e1.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         } finally {
             try {
                 if (br != null) {
@@ -391,7 +436,7 @@ public class Warehouse extends InputParameters{
         recountNearestContainers();
     }
     
-    public void readFromFile(String warehouseFilename,String parametersFilename) {
+    public void readFromFile(String warehouseFilename,String parametersFilename) throws Exception {
         readParameters(parametersFilename);
         readTopology(warehouseFilename);
     }
