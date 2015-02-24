@@ -157,6 +157,7 @@ public class DayPlanning {
                     writer.write( totalTrucksTime + ";");
                     writer.write( "\n");
                 }
+                orders.writeToCSV(writer);
             } catch (IOException ex) {
                 Logger logger = Logger.getLogger("Test");
                 logger.info(ex.getMessage());

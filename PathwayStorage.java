@@ -132,6 +132,7 @@ public class PathwayStorage {
     }
     
     public int getShelfIndex(String name) {
+        if (name.length() == 0) { return -1;}
         int lastElement = name.lastIndexOf("-");
         if (lastElement == -1) {
             lastElement = name.length();

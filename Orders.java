@@ -1,6 +1,7 @@
 package Warehouse;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -401,5 +402,14 @@ public class Orders {
     			logger.info(Warehouse.getInstance().getNameByIndex(i)+": "+counter.get(i)+I18n.TIMES);
     		}
     	}
+    }
+    
+    public void writeToCSV(BufferedWriter writer) throws IOException {
+        writer.write(I18n.REPLENISHMENT + ";\n");
+        for(int i = 0; i < counter.size(); i++){
+            if (counter.get(i) != 0){
+                writer.write(Warehouse.getInstance().getNameByIndex(i) + ";" + counter.get(i) + ";\n");
+            }
+        }
     }
 }

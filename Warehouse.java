@@ -346,12 +346,16 @@ public class Warehouse extends InputParameters{
         while (maxNumberOfShelfsInRow > 0) {
             line = br.readLine();
             lineCounter++;
-            if (line == null) {throw new Exception(I18n.wrongFormatOfFile(filename));}
+            if (line == null) {
+                throw new Exception(I18n.wrongFormatOfFile(filename));
+            }
             elements = line.split(";");
             i = 1;
             for (int j = 0; j < numberOfRows; j++) {
                 if (numberOfShelfsInRow[j] > 0) {
-                    if (i >= elements.length) {throw new Exception(I18n.wrongFormatOfFile(filename));}
+                    if (i >= elements.length) {
+                        throw new Exception(I18n.wrongNumberOfShelfs(i, filename));
+                    }
                     if (pathways.getShelfIndex(elements[i]) != -1) {
                         i++;
                         continue;
@@ -364,13 +368,18 @@ public class Warehouse extends InputParameters{
                     }
                     numberOfShelfsInRow[j]--;
                 }
-                else if (numberOfShelfsInRow[j] <= 0 && !elements[i].equals("")) {
+                else if (elements.length > i && numberOfShelfsInRow[j] <= 0 && !elements[i].equals("") && pathways.getShelfIndex(elements[i]) == -1) {
                     throw new Exception(I18n.wrongNumberOfShelfs(i, filename));
                 }
                 i++;
             }
             
-            maxNumberOfShelfsInRow--;
+            maxNumberOfShelfsInRow = numberOfShelfsInRow[0];
+            for (i = 1; i < numberOfRows; i++) {
+                if (maxNumberOfShelfsInRow < numberOfShelfsInRow[i]) {
+                    maxNumberOfShelfsInRow = numberOfShelfsInRow[i];
+                }
+            }
         }
     }
     
