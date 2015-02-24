@@ -84,7 +84,13 @@ public class PathwayStorage {
         for (int i = 0; i < pathways.size(); i++) {
             if (pathways.get(i).isLocatedInsideHorizontalBar(p)) { return i; }
         }
-        return -1;
+        if ((pathways.get(0).sizeOfLeftRow() > 0 && p.getX() < pathways.get(0).getPickupPointOfLeftRow(0).getX()) 
+                || (pathways.get(0).sizeOfRightRow() > 0 && p.getX() < pathways.get(0).getPickupPointOfRightRow(0).getX()) ) {
+            return -1;
+        }
+        else {
+            return pathways.size();
+        }
     }
     
     public int getNumberOfPathways() {
@@ -195,16 +201,22 @@ public class PathwayStorage {
     }
     
     private double getHighestRoadlock(int fromPathwayIndex, char fromSide, int toPathwayIndex, char toSide) {
-        if (fromPathwayIndex < 0 || toPathwayIndex < 0 || fromPathwayIndex == toPathwayIndex)
+        if (fromPathwayIndex < -1 || toPathwayIndex < -1 || fromPathwayIndex > pathways.size() || toPathwayIndex > pathways.size() || fromPathwayIndex == toPathwayIndex)
         {
             return Double.NEGATIVE_INFINITY;
         }
-        double currentMax = pathways.get(fromPathwayIndex).getHighestRoadlock(fromSide);
+        double currentMax = Double.NEGATIVE_INFINITY;
         double tmp;
-        if ( (tmp = pathways.get(toPathwayIndex).getHighestRoadlock(toSide)) > currentMax)
-        {
-            currentMax = tmp;
+        if (fromPathwayIndex >= 0 && fromPathwayIndex < pathways.size()) {
+            currentMax = pathways.get(fromPathwayIndex).getHighestRoadlock(fromSide);
         }
+        if (toPathwayIndex >= 0 && toPathwayIndex < pathways.size()) {
+            if ( (tmp = pathways.get(toPathwayIndex).getHighestRoadlock(toSide)) > currentMax)
+            {
+                currentMax = tmp;
+            }
+        }
+        
         int i;
         if(fromPathwayIndex < toPathwayIndex)
         {
@@ -234,16 +246,23 @@ public class PathwayStorage {
     }
     
     private double getLowestRoadlock(int fromPathwayIndex, char fromSide, int toPathwayIndex, char toSide) {
-        if (fromPathwayIndex < 0 || toPathwayIndex < 0 || fromPathwayIndex == toPathwayIndex)
+        if (fromPathwayIndex < -1 || toPathwayIndex < -1 || fromPathwayIndex > pathways.size() || toPathwayIndex > pathways.size() || fromPathwayIndex == toPathwayIndex)
         {
             return Double.POSITIVE_INFINITY;
         }
-        double currentMin = pathways.get(fromPathwayIndex).getLowestRoadlock(fromSide);
+        
+        double currentMin = Double.POSITIVE_INFINITY;
         double tmp;
-        if ( (tmp = pathways.get(toPathwayIndex).getLowestRoadlock(toSide)) < currentMin)
-        {
-            currentMin = tmp;
+        if (fromPathwayIndex >= 0 && fromPathwayIndex < pathways.size()) {
+            currentMin = pathways.get(fromPathwayIndex).getLowestRoadlock(fromSide);
         }
+        if (toPathwayIndex >= 0 && toPathwayIndex < pathways.size()) {
+            if ( (tmp = pathways.get(toPathwayIndex).getLowestRoadlock(toSide)) < currentMin)
+            {
+                currentMin = tmp;
+            }
+        }
+        
         int i;
         if(fromPathwayIndex < toPathwayIndex)
         {

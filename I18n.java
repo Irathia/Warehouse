@@ -42,6 +42,11 @@ public class I18n {
         return "Неверное задание левой верхней и правой нижней вершины " + row + " ряда. ";
     }
     
+    public static String wrongCoordinatesOfNeighborRows(int firstRow) {
+        return "Неверное задание координат " + firstRow + " и " + (firstRow+1) + " ряда. " +
+                firstRow + " ряд должен находиться левее " + (firstRow+1) + " ряда.";
+    }
+    
     public static String wrongNumberOfShelfs(int row) {
         return "Неверное задание числа ячеек в ряду " + row + ". ";
     }

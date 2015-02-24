@@ -333,6 +333,15 @@ public class Warehouse extends InputParameters{
             height[i] = (topLeft[i].getY() - bottomRight[i].getY()) / numberOfShelfsInRow[i];
             width[i] = (bottomRight[i].getX() - topLeft[i].getX());
         }
+        for (i = 0; i < (numberOfRows - 1); i++) {
+            if (bottomRight[i].getX() > topLeft[i+1].getX()) {
+                throw new Exception(I18n.wrongCoordinatesOfNeighborRows(i+1));
+            }
+        }
+        int rowShift = 0;
+        if (numberOfRows > 1 && bottomRight[0].getX() == topLeft[1].getX()) {
+            rowShift = 1;
+        }
         line = br.readLine();
         lineCounter++;
         if (line == null) {throw new Exception(I18n.wrongFormatOfFile(filename));}
@@ -361,7 +370,7 @@ public class Warehouse extends InputParameters{
                         continue;
                     }
                     Shelf sh = new Shelf(elements[i], topLeft[j].getX(), bottomRight[j].getY() + (height[j] * numberOfShelfsInRow[j]), width[j], height[j]);
-                    pathways.add(j, sh);
+                    pathways.add(j + rowShift, sh);
                     if (sh.getName().toUpperCase().contains(I18n.EMPTY_CONTAINER)) {
                         Point p = new Point(sh.getTopLeftX() + (sh.getBottomRightX() - sh.getTopLeftX())/2, sh.getBottomRightY() + (sh.getTopLeftY() - sh.getBottomRightY())/2);
                         emptyContainers.add(p);

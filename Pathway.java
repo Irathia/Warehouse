@@ -70,11 +70,16 @@ public class Pathway implements Comparator<OrderItem>{
     /*side variants: 'l', 'r', 'b'*/
     public double getHighestRoadlock(char side) {
         switch (side) {
-            case 'l':  
+            case 'l':
+                if (leftRow.size() == 0) { return Double.NEGATIVE_INFINITY; }
                 return leftRow.getTopLeftCornerOfRow().getY();
             case 'r':
+                if (rightRow.size() == 0) { return Double.NEGATIVE_INFINITY; }
                 return rightRow.getTopLeftCornerOfRow().getY();
             case 'b':
+                if (leftRow.size() == 0 && rightRow.size() == 0) { return Double.NEGATIVE_INFINITY; }
+                if (leftRow.size() == 0) { return rightRow.getTopLeftCornerOfRow().getY(); }
+                if (rightRow.size() == 0) { return leftRow.getTopLeftCornerOfRow().getY(); }
                 return Math.max(leftRow.getTopLeftCornerOfRow().getY(), rightRow.getTopLeftCornerOfRow().getY());
             default:
                 return Double.NEGATIVE_INFINITY;
@@ -85,10 +90,15 @@ public class Pathway implements Comparator<OrderItem>{
     public double getLowestRoadlock(char side) {
         switch (side) {
             case 'l':
+                if (leftRow.size() == 0) { return Double.POSITIVE_INFINITY; }
                 return leftRow.getBottomRightCornerOfRow().getY();
             case 'r':
+                if (rightRow.size() == 0) { return Double.POSITIVE_INFINITY; }
                 return rightRow.getBottomRightCornerOfRow().getY();
             case 'b':
+                if (leftRow.size() == 0 && rightRow.size() == 0) { return Double.POSITIVE_INFINITY; }
+                if (leftRow.size() == 0) { return rightRow.getBottomRightCornerOfRow().getY(); }
+                if (rightRow.size() == 0) { return leftRow.getBottomRightCornerOfRow().getY(); }
                 return Math.min(leftRow.getBottomRightCornerOfRow().getY(), rightRow.getBottomRightCornerOfRow().getY());
             default:
                 return Double.POSITIVE_INFINITY;

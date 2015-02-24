@@ -6,7 +6,7 @@ public class RouteDistance {
         if (from.getY() > to.getY()) {
             return Double.POSITIVE_INFINITY;
         }
-        return Math.sqrt(Math.pow(to.getX() - from.getX(), 2) + Math.pow(from.getY() - to.getY(), 2));
+        return  Math.abs(from.getX() - to.getX()) + Math.abs(from.getY() - to.getY());
     }
     
     private static double moveDownDistanceInOnePathway(Point from, Point to) {
@@ -14,9 +14,6 @@ public class RouteDistance {
     }
     
     private static double moveUpDistance(Point from, int fromPathwayIndex, Point to, int toPathwayIndex, PathwayStorage pathways) {
-        if (fromPathwayIndex < 0 || toPathwayIndex < 0) {
-            return Double.POSITIVE_INFINITY;
-        }
         if (fromPathwayIndex == toPathwayIndex) {moveUpDistanceInOnePathway(from, to);}
         double distance = Math.abs(to.getX() - from.getX());
         double criticalHeight = pathways.getHighestRoadlock(fromPathwayIndex, toPathwayIndex);
@@ -30,9 +27,6 @@ public class RouteDistance {
     }
     
     private static double moveDownDistance(Point from, int fromPathwayIndex, Point to, int toPathwayIndex, PathwayStorage pathways) {
-        if (fromPathwayIndex < 0 || toPathwayIndex < 0) {
-            return Double.POSITIVE_INFINITY;
-        }
         if (fromPathwayIndex == toPathwayIndex) {moveDownDistanceInOnePathway(from, to);}
         double distance = Math.abs(to.getX() - from.getX());
         double criticalHeight = pathways.getLowestRoadlock(fromPathwayIndex, toPathwayIndex);
@@ -46,9 +40,6 @@ public class RouteDistance {
     }
     
     private static double moveUpAndDownDistance(Point from, int fromPathwayIndex, Point to, int toPathwayIndex, PathwayStorage pathways) {
-        if (fromPathwayIndex < 0 || toPathwayIndex < 0) {
-            return Double.POSITIVE_INFINITY;
-        }
         if (fromPathwayIndex == toPathwayIndex) {
             return moveUpDistanceInOnePathway(from, to);
         }
@@ -80,9 +71,6 @@ public class RouteDistance {
     }
     
     private static double moveDownAndUpDistance(Point from, int fromPathwayIndex, Point to, int toPathwayIndex, PathwayStorage pathways) {
-        if (fromPathwayIndex < 0 || toPathwayIndex < 0) {
-            return Double.POSITIVE_INFINITY;
-        }
         if (fromPathwayIndex == toPathwayIndex) {
             return moveDownDistanceInOnePathway(from, to);
         }
