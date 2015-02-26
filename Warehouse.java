@@ -198,7 +198,7 @@ public class Warehouse extends InputParameters{
     }
     
     public int getIndexOfShelf(String name) {
-        return pathways.getShelfIndex(name);
+        return pathways.getShelfIndexByFullName(name);
     }
     
     public int getIndexOfFirstDelivery() {
@@ -365,7 +365,15 @@ public class Warehouse extends InputParameters{
                     if (i >= elements.length) {
                         throw new Exception(I18n.wrongNumberOfShelfs(i, filename));
                     }
-                    if (pathways.getShelfIndex(elements[i]) != -1) {
+                    if (elements[i].equals("")) {
+                        throw new Exception(I18n.wrongNumberOfShelfs(i, filename));
+                    }
+                    PointWithIndex tmpPoint = pathways.getPickupPointOfShelfWithRowIndexByPartOfName(elements[i]);
+                    if (tmpPoint != null) {
+                        if (tmpPoint.getIndex() != j + rowShift) {
+                            throw new Exception(I18n.wrongPartsOfCell(tmpPoint.getIndex(), j + rowShift, elements[i], filename));
+                        }
+                        pathways.duplicatePickupPointOfShelf(tmpPoint, tmpPoint.getIndex(), elements[i]);
                         i++;
                         continue;
                     }
@@ -377,8 +385,17 @@ public class Warehouse extends InputParameters{
                     }
                     numberOfShelfsInRow[j]--;
                 }
-                else if (elements.length > i && numberOfShelfsInRow[j] <= 0 && !elements[i].equals("") && pathways.getShelfIndex(elements[i]) == -1) {
-                    throw new Exception(I18n.wrongNumberOfShelfs(i, filename));
+                else if (elements.length > i && numberOfShelfsInRow[j] <= 0 && !elements[i].equals("")) {
+                    PointWithIndex tmpPoint = pathways.getPickupPointOfShelfWithRowIndexByPartOfName(elements[i]);
+                    if (tmpPoint == null) {
+                        throw new Exception(I18n.wrongNumberOfShelfs(i, filename));
+                    }
+                    else {
+                        if (tmpPoint.getIndex() != j + rowShift) {
+                            throw new Exception(I18n.wrongPartsOfCell(tmpPoint.getIndex(), j + rowShift, elements[i], filename));
+                        }
+                        pathways.duplicatePickupPointOfShelf(tmpPoint, tmpPoint.getIndex(), elements[i]);
+                    }
                 }
                 i++;
             }

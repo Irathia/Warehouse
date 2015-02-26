@@ -67,6 +67,18 @@ public class Pathway implements Comparator<OrderItem>{
         return -1;
     }
     
+    /*row variants: 'l', 'r'*/
+    public boolean duplicatePickupPointOfShelf(Point pickupPoint, char row, String nameOfDup) {
+        switch (row) {
+        case 'l':
+            return leftRow.duplicatePickupPointOfShelf(pickupPoint, nameOfDup);
+        case 'r':
+            return rightRow.duplicatePickupPointOfShelf(pickupPoint, nameOfDup);
+        default:
+            return false;
+        }
+    }
+    
     /*side variants: 'l', 'r', 'b'*/
     public double getHighestRoadlock(char side) {
         switch (side) {

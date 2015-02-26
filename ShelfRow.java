@@ -78,6 +78,16 @@ public class ShelfRow extends Rectangle {
         return -1;
     }
     
+    public boolean duplicatePickupPointOfShelf(Point pickupPoint, String nameOfDup) {
+        for (int i = pickupPoints.size() - 1; i >= 0; i--) {
+            if ( pickupPoint.getX() == pickupPoints.get(i).getX() && pickupPoint.getY() == pickupPoints.get(i).getY() ) {
+                pickupPoints.add(i, new PointWithName(pickupPoint.getX(), pickupPoint.getX(), nameOfDup) );
+                return true;
+            }
+        }
+        return false;
+    }    
+    
     public Point getTopLeftCornerOfRow() {
         return getTopLeft();
     }

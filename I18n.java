@@ -30,6 +30,10 @@ public class I18n {
         return "Не удалось найти ячейку c названием \"" + name + "\". Добавьте ячейку с данным названием в файле с топологией склада или исправьте название. ";
     }
     
+    public static String itemNotFound(String name) {
+        return "Не удалось найти товар c кодом \"" + name + "\". Добавьте товар с данным кодом в файл Items.csv или исправьте код товара. ";
+    }
+    
     public static String errorLine(int lineNumber, String filename) {
         return "Исправьте строку " + lineNumber + " в файле " + filename + ". ";
     }
@@ -57,5 +61,9 @@ public class I18n {
     
     public static String wrongNumberOfShelfs(int row, String filename) {
         return "Исправьте число ячеек в ряде " + row + " в файле " + filename + ". ";
+    }
+    
+    public static String wrongPartsOfCell(int firstInputRow, int secondInputRow, String cellName, String filename) {
+        return "Ячейка \"" + cellName + "\" из " + secondInputRow + " ряда относятся к слоту, находящемуся в " + firstInputRow  + " ряде. Исправьте файл " + filename + ". ";
     }
 }

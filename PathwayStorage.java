@@ -50,7 +50,7 @@ public class PathwayStorage {
         }
         int result = 0;
         for (int i = 0; i < pathwayIndex; i++) {
-            result += pathways.get(pathwayIndex).totalSize();
+            result += pathways.get(i).totalSize();
         }
         return result;
     }
@@ -126,6 +126,16 @@ public class PathwayStorage {
         return true;
     }
     
+    public boolean duplicatePickupPointOfShelf(Point pickupPoint, int rowIndex, String nameOfDup) {
+        if (rowIndex < 0) { return false;}
+        int remainder = rowIndex % 2;
+        int pathwayIndex = (rowIndex - remainder) / 2;
+        if (remainder == 0) {
+            return pathways.get(pathwayIndex).duplicatePickupPointOfShelf(pickupPoint, 'l', nameOfDup);
+        }
+        return pathways.get(pathwayIndex).duplicatePickupPointOfShelf(pickupPoint, 'r', nameOfDup);
+    }
+    
     public void recountNumberOfShelves() {
         numberOfShelves = 0;
         for (int i = 0; i < pathways.size(); i++) {
@@ -137,7 +147,7 @@ public class PathwayStorage {
         pathways.clear();
     }
     
-    public int getShelfIndex(String name) {
+    public int getShelfIndexByPartOfName(String name) {
         if (name.length() == 0) { return -1;}
         int lastElement = name.lastIndexOf("-");
         if (lastElement == -1) {
@@ -148,6 +158,42 @@ public class PathwayStorage {
         int result;
         for (int i = 0; i < pathways.size(); i++) {
             result = pathways.get(i).findName(newName);
+            if (result != -1) {
+                return  index + result;
+            }
+            index += pathways.get(i).totalSize();
+        }
+        return -1;
+    }
+    
+    public PointWithIndex getPickupPointOfShelfWithRowIndexByPartOfName(String name) {
+        if (name.length() == 0) { return null;}
+        int lastElement = name.lastIndexOf("-");
+        if (lastElement == -1) {
+            lastElement = name.length();
+        }
+        String newName = name.substring(0, lastElement);
+        int result;
+        for (int i = 0; i < pathways.size(); i++) {
+            result = pathways.get(i).findName(newName);
+            if (result != -1) {
+                PointWithName resPoint = pathways.get(i).getPickupPoint(result);
+                int shift = 0;
+                if (result >= pathways.get(i).sizeOfLeftRow()) {
+                    shift = 1;
+                }
+                return new PointWithIndex(resPoint.getX(), resPoint.getY(), i*2 + shift);
+            }
+        }
+        return null;
+    }
+    
+    public int getShelfIndexByFullName(String name) {
+        if (name.length() == 0) { return -1;}
+        int index = 0;
+        int result;
+        for (int i = 0; i < pathways.size(); i++) {
+            result = pathways.get(i).findName(name);
             if (result != -1) {
                 return  index + result;
             }

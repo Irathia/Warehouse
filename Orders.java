@@ -143,6 +143,9 @@ public class Orders {
                         //
                         if (items.isExist(Long.parseLong(elements[1])) == false) {break;}
                         int indexOfShelf = items.getShelfsIndex(Long.parseLong(elements[1]));
+                        if (indexOfShelf == -1) {
+                            throw new Exception(I18n.wrongFormatOfFile(filenameForItems) + I18n.itemNotFound(elements[1]));
+                        }
                         double liters = items.getItem(indexOfShelf).getLiters();
                         OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),liters);
                         v.add(oi);
@@ -151,6 +154,9 @@ public class Orders {
                         currentShop = Long.parseLong(elements[0]);
                         if (items.isExist(Long.parseLong(elements[1])) == false) {break;}
                         int indexOfShelf = items.getShelfsIndex(Long.parseLong(elements[1]));
+                        if (indexOfShelf == -1) {
+                            throw new Exception(I18n.wrongFormatOfFile(filenameForItems) + I18n.itemNotFound(elements[1]));
+                        }
                         double liters = items.getItem(indexOfShelf).getLiters();
                         OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),liters);
                         v.add(oi);

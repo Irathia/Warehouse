@@ -38,7 +38,7 @@ public class Items {
                 }
                 
                 int index = Warehouse.getInstance().getIndexOfShelf(elements[0]);
-                if ( index == -1) {
+                if (index == -1) {
                     throw new Exception(I18n.shelfNotFound(elements[0]) + I18n.errorLine(lineCounter, filename));
                 }
                 
@@ -79,7 +79,7 @@ public class Items {
 				return i;
 			}
 		}
-		return 0;
+		return -1;
 	};
 
     public void addItem(Item item){
