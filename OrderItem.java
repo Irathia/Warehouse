@@ -5,15 +5,15 @@ public class OrderItem implements Comparable<OrderItem>{
 	private  int index;//index of shelf
 	private  int rigidity;
 	private  double volume;
-    private double pieces;
-    private double boxes;
+    private int pieces;
+    private int boxes;
     boolean signPicking;//1 - pieces, 0 - box
 	
 	OrderItem(){
 		
 	};
 
-	OrderItem(int index, int rigidity, double volume, double pieces,double boxes, boolean signPicking){
+	OrderItem(int index, int rigidity, double volume, int pieces,int boxes, boolean signPicking){
 		this.index = index;
 		this.rigidity = rigidity;
 		this.volume = volume;
@@ -79,9 +79,9 @@ public class OrderItem implements Comparable<OrderItem>{
     	this.volume = volume;
     }
 
-    public void setBoxes(double boxes) {this.boxes = boxes;}
+    public void setBoxes(int boxes) {this.boxes = boxes;}
 
-    public void setPieces(double pieces) {this.pieces = pieces;}
+    public void setPieces(int pieces) {this.pieces = pieces;}
 
     @Override
     public int compareTo(OrderItem o) {

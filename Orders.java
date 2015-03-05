@@ -151,7 +151,7 @@ public class Orders {
                         if(Integer.parseInt(elements[5]) == 1){
                             signPicking = true;
                         }
-                        OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),Double.parseDouble(elements[2].replaceAll(",", ".")),Double.parseDouble(elements[4].replaceAll(",", ".")),signPicking);
+                        OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),(int)Math.ceil(Double.parseDouble(elements[2].replaceAll(",", "."))),(int)Math.ceil(Double.parseDouble(elements[4].replaceAll(",", "."))),signPicking);
                         v.add(oi);
                     }
                     else {
@@ -165,7 +165,7 @@ public class Orders {
                         if(Integer.parseInt(elements[5]) == 1){
                             signPicking = true;
                         }
-                        OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),Double.parseDouble(elements[2].replaceAll(",", ".")),Double.parseDouble(elements[4].replaceAll(",", ".")),signPicking);
+                        OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),(int)Math.ceil(Double.parseDouble(elements[2].replaceAll(",", "."))),(int)Math.ceil(Double.parseDouble(elements[4].replaceAll(",", "."))),signPicking);
                         v.add(oi);
                     }
                 } catch (Exception ex) {
