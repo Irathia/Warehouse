@@ -12,7 +12,8 @@ public class InputParameters {
     private double speed; // meters per second
     private double timeOfPreparingEmptyContainer; // seconds
     private double timeOfPreparingForDelivery; //seconds
-    private double timeOfRestacking; //seconds
+    private double timeOfBoxRestacking; //seconds
+    private double timeOfUnitRestacking; //seconds
     private double timeOfLabeling; // seconds
     private double truckCapacity; // liter
     private Time startOfWork;
@@ -49,8 +50,12 @@ public class InputParameters {
         return finishOfBreak;
     }
     
-    public double getTimeOfRestacking() {
-        return timeOfRestacking;
+    public double getTimeOfBoxRestacking() {
+        return timeOfBoxRestacking;
+    }
+    
+    public double getTimeOfUnitRestacking() {
+        return timeOfUnitRestacking;
     }
     
     public double getSpeed() {
@@ -125,7 +130,9 @@ public class InputParameters {
                 double tmp = readDouble(br, filename);
                 maximumOrderExecutionTime = (long) (tmp * 1000);
                 lineCounter++;
-                timeOfRestacking = readDouble(br, filename);
+                timeOfUnitRestacking = readDouble(br, filename);
+                lineCounter++;
+                timeOfBoxRestacking = readDouble(br, filename);
                 lineCounter++;
                 timeOfPreparingEmptyContainer = readDouble(br, filename);
                 lineCounter++;
