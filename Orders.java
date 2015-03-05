@@ -11,7 +11,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.DoubleSummaryStatistics;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -399,7 +398,7 @@ public class Orders {
     	logger.info(I18n.REPLENISHMENT);
     	for(int i = 0; i < counter.size(); i++){
     		if (counter.get(i) != 0){
-    			logger.info(Warehouse.getInstance().getNameByIndex(i)+": "+counter.get(i)+I18n.LITERS);
+    			logger.info(Warehouse.getInstance().getNameByIndex(i) + ": " + counter.get(i));
     		}
     	}
     }
@@ -408,7 +407,7 @@ public class Orders {
         writer.write(I18n.REPLENISHMENT + ";\n");
         for(int i = 0; i < counter.size(); i++){
             if (counter.get(i) != 0){
-                writer.write(Warehouse.getInstance().getNameByIndex(i) + ";" + counter.get(i) + ";\n");
+                writer.write(Warehouse.getInstance().getNameByIndex(i) + ";" + Double.toString(counter.get(i)).replace(".", ",") + ";\n");
             }
         }
     }
