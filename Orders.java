@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.DoubleSummaryStatistics;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -21,7 +22,7 @@ public class Orders {
 	private Vector <Task> tasks;
 	private Vector <Integer> indexOfFirstOrderTask;
     private Vector <Integer> delivery;
-    private Vector <Integer> counter;//for replenishment()
+    private Vector <Double> counter;//for replenishment() in liters
 	
 	Orders(String filenameForItems, String fileForShop, String filename) throws Exception
 	{
@@ -126,11 +127,11 @@ public class Orders {
             while((line = br.readLine()) != null){
                 lineCounter++;
                 String[] elements = line.split(";");
-                //indexForShop,indexForGoods,-,volume,-
+                //indexForShop,indexForGoods,pieces,volume,boxes,flag
                 
                 if (elements.length == 0) {
                     break;
-                } else if (elements.length < 5) {
+                } else if (elements.length < 6) {
                     throw new Exception(I18n.wrongFormatOfFile(filenameForItems)); 
                 }
                 
@@ -146,8 +147,11 @@ public class Orders {
                         if (indexOfShelf == -1) {
                             throw new Exception(I18n.wrongFormatOfFile(filenameForItems) + I18n.itemNotFound(elements[1]));
                         }
-                        double liters = items.getItem(indexOfShelf).getLiters();
-                        OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),liters);
+                        boolean signPicking = false;
+                        if(Integer.parseInt(elements[5]) == 1){
+                            signPicking = true;
+                        }
+                        OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),Double.parseDouble(elements[2].replaceAll(",", ".")),Double.parseDouble(elements[4].replaceAll(",", ".")),signPicking);
                         v.add(oi);
                     }
                     else {
@@ -157,8 +161,11 @@ public class Orders {
                         if (indexOfShelf == -1) {
                             throw new Exception(I18n.wrongFormatOfFile(filenameForItems) + I18n.itemNotFound(elements[1]));
                         }
-                        double liters = items.getItem(indexOfShelf).getLiters();
-                        OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),liters);
+                        boolean signPicking = false;
+                        if(Integer.parseInt(elements[5]) == 1){
+                            signPicking = true;
+                        }
+                        OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),Double.parseDouble(elements[2].replaceAll(",", ".")),Double.parseDouble(elements[4].replaceAll(",", ".")),signPicking);
                         v.add(oi);
                     }
                 } catch (Exception ex) {
@@ -199,7 +206,7 @@ public class Orders {
         return delivery;
     }
     
-    public final Vector <Integer> getReplenishment(){
+    public final Vector <Double> getReplenishment(){
     	return counter;
     }
 
@@ -354,33 +361,20 @@ public class Orders {
     public void replenishment(){
         //we write info straight into logs
         Vector <Item> its = new Vector<Item>(items.getItems());
-        counter = new Vector <Integer>();
+        counter = new Vector <Double>();
         Vector <Double> v = new Vector <Double>();
         for( int i = 0; i < its.size(); i++){
-            counter.add(0);
             v.add(0.0);
         }
 
         for(int i = 0; i < tasks.size(); i++){
             for (int j = 0; j < tasks.get(i).getSize(); j++){
-            	v.set(tasks.get(i).getItem(j).getIndex(), v.get(tasks.get(i).getItem(j).getIndex()) + tasks.get(i).getItem(j).getNumberOfBoxes(tasks.get(i).getItem(j).getVolume(),false));
-                //its.get(tasks.get(i).getItem(j).getIndex()).setBoxes(its.get(tasks.get(i).getItem(j).getIndex()).getBoxes()-tasks.get(i).getItem(j).getNumberOfBoxes(tasks.get(i).getItem(j).getVolume(),false));
-                
-                /*if (its.get(tasks.get(i).getItem(j).getIndex()).getBoxes() <= 0){
-                    its.get(tasks.get(i).getItem(j).getIndex()).setBoxes(items.getItem(tasks.get(i).getItem(j).getIndex()).getBoxes());
-                    counter.set(tasks.get(i).getItem(j).getIndex(),counter.get(tasks.get(i).getItem(j).getIndex())+1);
-                }*/
+            	v.set(tasks.get(i).getItem(j).getIndex(), v.get(tasks.get(i).getItem(j).getIndex()) + tasks.get(i).getItem(j).getVolume());
             }
         }
         
         for( int i = 0; i < its.size(); i++){
-            counter.set(i,(int)Math.ceil(v.get(i)/(its.get(i).getBoxes())));
-        }
-        for( int i = 0; i < counter.size(); i++){
-        	if (counter.get(i) != 0){
-        		counter.set(i,counter.get(i)-1);
-        	}
-            
+            counter.add(Math.max(0, v.get(i) - its.get(i).getVolume()));
         }
 
     }

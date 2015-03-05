@@ -29,10 +29,10 @@ public class Items {
                 lineCounter++;
                 String[] elements = line.split(";");
                 if (elements.length < 5) { throw new Exception(I18n.wrongFormatOfFile(filename)); }
-                //shelf,index,boxes,volume,rigidity
+                //shelf,index,-,volume,rigidity
                 Item it; 
                 try {
-                    it = new Item(Long.parseLong(elements[1]),Integer.parseInt(elements[4]),Integer.parseInt(elements[2].replaceAll(" ","")),Integer.parseInt(elements[3].replaceAll(" ","")));
+                    it = new Item(Long.parseLong(elements[1]),Integer.parseInt(elements[4]),Double.parseDouble(elements[3].replaceAll(" ","")));
                 } catch(Exception ex) {
                     throw new Exception(I18n.errorLine(lineCounter, filename));
                 }

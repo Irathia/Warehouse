@@ -107,19 +107,37 @@ public class Order implements Comparable<Order>{
 		        }
 		        if (volumeOfAllGoodsInContainer != maximumVolumeOfTruck) {
 		            
-                    //boxes
-                    int nOfBoxes = oi.get(j).getNumberOfBoxes(maximumVolumeOfTruck - volumeOfAllGoodsInContainer,true);
-                    double previousVolume = 0;
-                    if (t.getItems().size() != 0 && t.getItem(t.getItems().size()-1).getIndex() == oi.get(j).getIndex()){
-                    	previousVolume = t.getItem(t.getItems().size()-1).getVolume();
-                    	t.getItem(t.getItems().size()-1).setVolume(t.getItem(t.getItems().size()-1).getVolume() + oi.get(j).getVolume());
+                    if(oi.get(j).getSignPicking() == true){
+                        //pieces
+                        int nOfPieces = oi.get(j).getNumberOfPieces(maximumVolumeOfTruck - volumeOfAllGoodsInContainer,true);
+                        double previousVolume = 0;
+                        if (t.getItems().size() != 0 && t.getItem(t.getItems().size()-1).getIndex() == oi.get(j).getIndex()){
+                            previousVolume = t.getItem(t.getItems().size()-1).getVolume();
+                            t.getItem(t.getItems().size()-1).setVolume(t.getItem(t.getItems().size()-1).getVolume() + oi.get(j).getVolume());
+                        }
+                        else{
+                            t.addItem(new OrderItem(oi.get(j)));
+                        }
+
+                        t.getItem(t.getSize()-1).setVolume(nOfPieces*oi.get(j).getVolume()/oi.get(j).getPieces() + previousVolume);
+                        oi.get(j).setVolume(oi.get(j).getBoxes() - nOfPieces * oi.get(j).getVolume() / oi.get(j).getPieces());
                     }
                     else{
-                    	t.addItem(new OrderItem(oi.get(j)));
+                        //boxes
+                        int nOfBoxes = oi.get(j).getNumberOfBoxes(maximumVolumeOfTruck - volumeOfAllGoodsInContainer,true);
+                        double previousVolume = 0;
+                        if (t.getItems().size() != 0 && t.getItem(t.getItems().size()-1).getIndex() == oi.get(j).getIndex()){
+                            previousVolume = t.getItem(t.getItems().size()-1).getVolume();
+                            t.getItem(t.getItems().size()-1).setVolume(t.getItem(t.getItems().size()-1).getVolume() + oi.get(j).getVolume());
+                        }
+                        else{
+                            t.addItem(new OrderItem(oi.get(j)));
+                        }
+
+                        t.getItem(t.getSize()-1).setVolume(nOfBoxes*oi.get(j).getVolume()/oi.get(j).getBoxes() + previousVolume);
+                        oi.get(j).setVolume(volume - nOfBoxes*oi.get(j).getVolume()/oi.get(j).getBoxes());
                     }
-                    
-                    t.getItem(t.getSize()-1).setVolume(nOfBoxes*oi.get(j).getLiters() + previousVolume);
-		            oi.get(j).setVolume(volume - nOfBoxes*oi.get(j).getLiters());
+
 	            }
 		        if (deliverySide == Expedition.North) {
                     t.setFinish(Warehouse.getInstance().getNearestNorthDelivery(t.getItem(t.getSize()-1).getIndex()));//get finish point
@@ -223,29 +241,46 @@ public class Order implements Comparable<Order>{
 	            }
 				t1.calculateExecutionTime();
 				if (t1.getExecutionTime().getTime() >= maxExecutionTime){
-						int index = t1.getItems().size()-1;
-						int the_number_of_boxes_for_full_volume = t1.getItem(index).getNumberOfBoxes(t1.getItem(index).getVolume(),false);
-					
-						int boxes = (int)Math.max(0, (int)Math.floor((maxExecutionTime - (t1.getExecutionTime().getTime() - the_number_of_boxes_for_full_volume*Warehouse.getInstance().getTimeOfRestacking()*1000))/(Warehouse.getInstance().getTimeOfRestacking()*1000)));
-						if (boxes == 0){
-							t1.getItems().remove(index);
-						}
-						else{
-							t1.getItem(index).setVolume(boxes*t1.getItem(index).getLiters());
-							t.getItem(j).setVolume(t.getItem(j).getVolume() - boxes*t1.getItem(index).getLiters());
-						}
-						
-						if (deliverySide == Expedition.North) {
-			                t1.setFinish(Warehouse.getInstance().getNearestNorthDelivery(t1.getItem(t1.getSize()-1).getIndex()));//get finish point
-			            }
-			            else {
-			                t1.setFinish(Warehouse.getInstance().getNearestSouthDelivery(t1.getItem(t1.getSize()-1).getIndex()));
-			            }
-						t1.calculateExecutionTime();
-						tasks.add(t1);
-						i++;
-						flag = true;
-						break;
+					int index = t1.getItems().size()-1;
+
+                    if (t1.getItem(index).getSignPicking() == true){
+                        //pieces
+                        int the_number_of_pieces_for_full_volume = t1.getItem(index).getNumberOfPieces(t1.getItem(index).getVolume(), false);
+
+                        int pieces = (int)Math.max(0, (int)Math.floor((maxExecutionTime - (t1.getExecutionTime().getTime() - the_number_of_pieces_for_full_volume*Warehouse.getInstance().getTimeOfUnitRestacking()*1000))/(Warehouse.getInstance().getTimeOfUnitRestacking()*1000)));
+                        if (pieces == 0){
+                            t1.getItems().remove(index);
+                        }
+                        else{
+                            t1.getItem(index).setVolume(pieces*t1.getItem(index).getVolume()/t1.getItem(index).getPieces());
+                            t.getItem(j).setVolume(t.getItem(j).getVolume() - t1.getItem(index).getVolume());
+                        }
+                    }
+                    else{
+                        //boxes
+                        int the_number_of_boxes_for_full_volume = t1.getItem(index).getNumberOfBoxes(t1.getItem(index).getVolume(),false);
+
+                        int boxes = (int)Math.max(0, (int)Math.floor((maxExecutionTime - (t1.getExecutionTime().getTime() - the_number_of_boxes_for_full_volume*Warehouse.getInstance().getTimeOfBoxRestacking()*1000))/(Warehouse.getInstance().getTimeOfBoxRestacking()*1000)));
+                        if (boxes == 0){
+                            t1.getItems().remove(index);
+                        }
+                        else{
+                            t1.getItem(index).setVolume(boxes*t1.getItem(index).getVolume()/t1.getItem(index).getBoxes());
+                            t.getItem(j).setVolume(t.getItem(j).getVolume() - t1.getItem(index).getVolume());
+                        }
+                    }
+
+                    if (deliverySide == Expedition.North) {
+                        t1.setFinish(Warehouse.getInstance().getNearestNorthDelivery(t1.getItem(t1.getSize()-1).getIndex()));//get finish point
+                    }
+                    else {
+                        t1.setFinish(Warehouse.getInstance().getNearestSouthDelivery(t1.getItem(t1.getSize()-1).getIndex()));
+                    }
+					t1.calculateExecutionTime();
+					tasks.add(t1);
+					i++;
+					flag = true;
+					break;
 				}
 				
 			}

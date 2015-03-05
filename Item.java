@@ -6,18 +6,16 @@ package Warehouse;
 public class Item {
 	private long index;
 	private int rigidity;
-    private int boxes;
-    private double liters;//1 box = liters
+    private double volume;
 
     Item(){
 
     };
 
-    Item(long index,int rigidity, int boxes, int liters){
+    Item(long index,int rigidity, double volume){
         this.index = index;
         this.rigidity = rigidity;
-        this.boxes = boxes;
-        this.liters = (double)liters/boxes;
+        this.volume = volume;
     }
 
     public final long getIndex(){
@@ -28,12 +26,8 @@ public class Item {
         return rigidity;
     }
 
-    public final int getBoxes() {
-        return boxes;
-    }
-
-    public final double getLiters() {
-        return liters;
+    public final double getVolume() {
+        return volume;
     }
 
     public void setIndex(long index){
@@ -44,7 +38,7 @@ public class Item {
         this.rigidity = rigidity;
     }
 
-    public void setBoxes (int boxes){
-        this.boxes = boxes;
+    public void setVolume (double volume){
+        this.volume = volume;
     }
 }

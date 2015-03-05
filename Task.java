@@ -121,9 +121,20 @@ public class Task {
 		double l = warehouse.getRealDistance(start,items.get(0).getIndex());
 		for (int i = 0; i < items.size()-1; i++){
 			l += warehouse.getRealDistance(items.get(i).getIndex(),items.get(i+1).getIndex());
-            sec += items.get(i).getNumberOfBoxes(items.get(i).getVolume(),false)*warehouse.getTimeOfRestacking()+warehouse.getTimeOfDeliveryPreparing();
+            if (items.get(i).getSignPicking() == true){
+                sec += items.get(i).getNumberOfPieces(items.get(i).getVolume(), false)*warehouse.getTimeOfUnitRestacking()+warehouse.getTimeOfDeliveryPreparing();
+            }
+            else{
+                sec += items.get(i).getNumberOfBoxes(items.get(i).getVolume(),false)*warehouse.getTimeOfBoxRestacking()+warehouse.getTimeOfDeliveryPreparing();
+            }
+
 		}
-		sec += items.get(items.size()-1).getNumberOfBoxes(items.get(items.size()-1).getVolume(),false)*warehouse.getTimeOfRestacking()+warehouse.getTimeOfDeliveryPreparing();
+        if (items.get(items.size()-1).getSignPicking() == true){
+            sec += items.get(items.size()-1).getNumberOfPieces(items.get(items.size()-1).getVolume(),false)*warehouse.getTimeOfUnitRestacking()+warehouse.getTimeOfDeliveryPreparing();
+        }
+        else{
+            sec += items.get(items.size()-1).getNumberOfBoxes(items.get(items.size()-1).getVolume(),false)*warehouse.getTimeOfBoxRestacking()+warehouse.getTimeOfDeliveryPreparing();
+        }
 
 		l += warehouse.getRealDistance(items.get(items.size()-1).getIndex(),finish);
 
