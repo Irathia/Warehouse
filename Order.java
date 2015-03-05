@@ -119,8 +119,8 @@ public class Order implements Comparable<Order>{
                             t.addItem(new OrderItem(oi.get(j)));
                         }
 
-                        t.getItem(t.getSize()-1).setVolume(nOfPieces*oi.get(j).getVolume()/oi.get(j).getPieces() + previousVolume);
-                        oi.get(j).setVolume(oi.get(j).getBoxes() - nOfPieces * oi.get(j).getVolume() / oi.get(j).getPieces());
+                        t.getItem(t.getSize()-1).setVolume(nOfPieces*oi.get(j).getAllVolume()/oi.get(j).getPieces() + previousVolume);
+                        oi.get(j).setVolume(volume - nOfPieces * oi.get(j).getAllVolume() / oi.get(j).getPieces());
                     }
                     else{
                         //boxes
@@ -134,8 +134,8 @@ public class Order implements Comparable<Order>{
                             t.addItem(new OrderItem(oi.get(j)));
                         }
 
-                        t.getItem(t.getSize()-1).setVolume(nOfBoxes*oi.get(j).getVolume()/oi.get(j).getBoxes() + previousVolume);
-                        oi.get(j).setVolume(volume - nOfBoxes*oi.get(j).getVolume()/oi.get(j).getBoxes());
+                        t.getItem(t.getSize()-1).setVolume(nOfBoxes*oi.get(j).getAllVolume()/oi.get(j).getBoxes() + previousVolume);
+                        oi.get(j).setVolume(volume - nOfBoxes*oi.get(j).getAllVolume()/oi.get(j).getBoxes());
                     }
 
 	            }

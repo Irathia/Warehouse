@@ -147,9 +147,9 @@ public class Orders {
                             throw new Exception(I18n.wrongFormatOfFile(filenameForItems) + I18n.itemNotFound(elements[1]));
                         }
                         boolean signPicking = false;
-                        if(Integer.parseInt(elements[5]) == 1){
+                        /*if(Integer.parseInt(elements[5]) == 1){
                             signPicking = true;
-                        }
+                        }*/
                         OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),(int)Math.ceil(Double.parseDouble(elements[2].replaceAll(",", "."))),(int)Math.ceil(Double.parseDouble(elements[4].replaceAll(",", "."))),signPicking);
                         v.add(oi);
                     }
@@ -161,9 +161,9 @@ public class Orders {
                             throw new Exception(I18n.wrongFormatOfFile(filenameForItems) + I18n.itemNotFound(elements[1]));
                         }
                         boolean signPicking = false;
-                        if(Integer.parseInt(elements[5]) == 1){
+                        /*if(Integer.parseInt(elements[5]) == 1){
                             signPicking = true;
-                        }
+                        }*/
                         OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),(int)Math.ceil(Double.parseDouble(elements[2].replaceAll(",", "."))),(int)Math.ceil(Double.parseDouble(elements[4].replaceAll(",", "."))),signPicking);
                         v.add(oi);
                     }

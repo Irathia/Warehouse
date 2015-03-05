@@ -5,12 +5,12 @@ public class OrderItem implements Comparable<OrderItem>{
 	private  int index;//index of shelf
 	private  int rigidity;
 	private  double volume;
+	private double AllVolume;
     private int pieces;
     private int boxes;
     boolean signPicking;//1 - pieces, 0 - box
 	
 	OrderItem(){
-		
 	};
 
 	OrderItem(int index, int rigidity, double volume, int pieces,int boxes, boolean signPicking){
@@ -20,6 +20,7 @@ public class OrderItem implements Comparable<OrderItem>{
         this.pieces = pieces;
         this.boxes = boxes;
         this.signPicking = signPicking;
+        this.AllVolume = volume;
 	}
 	
 	OrderItem(OrderItem item){
@@ -29,6 +30,7 @@ public class OrderItem implements Comparable<OrderItem>{
         this.pieces = item.pieces;
         this.boxes = item.boxes;
         this.signPicking = item.signPicking;
+        this.AllVolume = item.AllVolume;
 	}
 	
 	public final int getIndex(){
@@ -45,19 +47,19 @@ public class OrderItem implements Comparable<OrderItem>{
 
     public final int getNumberOfBoxes(double v, boolean floor){
     	if (floor == true){
-    		return (int)Math.floor((long)(v*boxes/volume));
+    		return (int)Math.floor((long)(v*boxes/AllVolume));
     	}
     	else{
-    		return (int)Math.ceil((long)(v*boxes/volume));
+    		return (int)Math.ceil((long)(v*boxes/AllVolume));
     	}
     }
 
     public final int getNumberOfPieces(double v, boolean floor){
         if (floor == true){
-            return (int)Math.floor((long)(v*pieces/volume));
+            return (int)Math.floor((long)(v*pieces/AllVolume));
         }
         else{
-            return (int)Math.ceil((long)(v*pieces/volume));
+            return (int)Math.ceil((long)(v*pieces/AllVolume));
         }
     }
 
@@ -66,6 +68,8 @@ public class OrderItem implements Comparable<OrderItem>{
     public final double getBoxes() {return boxes; }
 
     public final boolean getSignPicking() {return signPicking; }
+    
+    public final double getAllVolume() {return AllVolume; }
 
     public void setIndex(int index){
         this.index = index;
