@@ -399,7 +399,7 @@ public class Orders {
     	logger.info(I18n.REPLENISHMENT);
     	for(int i = 0; i < counter.size(); i++){
     		if (counter.get(i) != 0){
-    			logger.info(Warehouse.getInstance().getNameByIndex(i)+": "+counter.get(i)+I18n.TIMES);
+    			logger.info(Warehouse.getInstance().getNameByIndex(i)+": "+counter.get(i)+I18n.LITERS);
     		}
     	}
     }

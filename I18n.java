@@ -15,7 +15,8 @@ public class I18n {
     public static final String TRUCKS_INFO = "Информация по взятым заданиям кладовщиками";
     public static final String TRUCK = "кладовщик";
     public static final String TASK = "задание";
-    public static final String TIMES = " литров";
+    public static final String TIMES = " раз(а)";
+    public static final String LITERS = " литров";
     public static final String TASK_EXECUTION_TIME = "Время выполнения задания";
     public static final String TASK_SHELFS = "Посещенные ячейки";
     public static final String PLANNING_ERROR = "Не удалось распределить задания по кладовщикам. Необходимо уменьшить максимальное время выполнения заказа";
