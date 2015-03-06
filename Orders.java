@@ -161,14 +161,18 @@ public class Orders {
                             throw new Exception(I18n.wrongFormatOfFile(filenameForItems) + I18n.itemNotFound(elements[1]));
                         }
                         boolean signPicking = false;
-                        if(Integer.parseInt(elements[5]) == 1){
+                        int restackingFlag = Integer.parseInt(elements[5]);
+                        if(restackingFlag == 1) {
                             signPicking = true;
+                        }
+                        else if (restackingFlag != 0) {
+                            throw new Exception(I18n.wrongFormatOfFile(filenameForItems) + I18n.wrongFlag(elements[5]));
                         }
                         OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),(int)Math.ceil(Double.parseDouble(elements[2].replaceAll(",", "."))),(int)Math.ceil(Double.parseDouble(elements[4].replaceAll(",", "."))),signPicking);
                         v.add(oi);
                     }
                 } catch (Exception ex) {
-                    throw new Exception(I18n.errorLine(lineCounter, filenameForItems));
+                    throw new Exception(ex.getMessage() + "\n" + I18n.errorLine(lineCounter, filenameForItems));
                 }
             }
             this.getOrderByShop(currentShop).setItems(v);

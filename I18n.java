@@ -66,4 +66,8 @@ public class I18n {
     public static String wrongPartsOfCell(int firstInputRow, int secondInputRow, String cellName, String filename) {
         return "Ячейка \"" + cellName + "\" из " + secondInputRow + " ряда относятся к слоту, находящемуся в " + firstInputRow  + " ряде. Исправьте файл " + filename + ". ";
     }
+    
+    public static String wrongFlag(String flagName) {
+        return "Неверный входной параметр \"" + flagName + "\"" + ". ";
+    }
 }
