@@ -255,7 +255,7 @@ public class Order implements Comparable<Order>{
                             t1.getItems().remove(index);
                         }
                         else{
-                            t1.getItem(index).setVolume(pieces*t1.getItem(index).getVolume()/t1.getItem(index).getPieces());
+                            t1.getItem(index).setVolume(pieces*t1.getItem(index).getAllVolume()/t1.getItem(index).getPieces());
                             t.getItem(j).setVolume(t.getItem(j).getVolume() - t1.getItem(index).getVolume());
                         }
                     }
@@ -268,7 +268,7 @@ public class Order implements Comparable<Order>{
                             t1.getItems().remove(index);
                         }
                         else{
-                            t1.getItem(index).setVolume(boxes*t1.getItem(index).getVolume()/t1.getItem(index).getBoxes());
+                            t1.getItem(index).setVolume(boxes*t1.getItem(index).getAllVolume()/t1.getItem(index).getBoxes());
                             t.getItem(j).setVolume(t.getItem(j).getVolume() - t1.getItem(index).getVolume());
                         }
                     }
