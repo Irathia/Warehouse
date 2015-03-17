@@ -141,7 +141,9 @@ public class Orders {
                         v.clear();
                         currentShop = Long.parseLong(elements[0]);
                         //
-                        if (items.isExist(Long.parseLong(elements[1])) == false) {break;}
+                        if (items.isExist(Long.parseLong(elements[1])) == false) {
+                        	throw new Exception(I18n.itemNotFound(elements[1]));
+                        }
                         int indexOfShelf = items.getShelfsIndex(Long.parseLong(elements[1]));
                         if (indexOfShelf == -1) {
                             throw new Exception(I18n.wrongFormatOfFile(filenameForItems) + I18n.itemNotFound(elements[1]));
@@ -155,7 +157,9 @@ public class Orders {
                     }
                     else {
                         currentShop = Long.parseLong(elements[0]);
-                        if (items.isExist(Long.parseLong(elements[1])) == false) {break;}
+                        if (items.isExist(Long.parseLong(elements[1])) == false) {
+                        	throw new Exception(I18n.itemNotFound(elements[1]));
+                        }
                         int indexOfShelf = items.getShelfsIndex(Long.parseLong(elements[1]));
                         if (indexOfShelf == -1) {
                             throw new Exception(I18n.wrongFormatOfFile(filenameForItems) + I18n.itemNotFound(elements[1]));
