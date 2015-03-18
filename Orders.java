@@ -45,9 +45,7 @@ public class Orders {
                 lineCounter++;
                 String[] elements = line.split(";");
                 //indexForShop,-,time,expedition
-                if (elements.length == 0) {
-                    break;
-                } else if (elements.length < 4) {
+                if (elements.length < 4) {
                     throw new Exception(I18n.wrongFormatOfFile(fileForShop)); 
                 }
                 DateFormat formatter = new SimpleDateFormat("HH:mm");
@@ -128,9 +126,7 @@ public class Orders {
                 String[] elements = line.split(";");
                 //indexForShop,indexForGoods,pieces,volume,boxes,flag
                 
-                if (elements.length == 0) {
-                    break;
-                } else if (elements.length < 6) {
+                if (elements.length < 6) {
                     throw new Exception(I18n.wrongFormatOfFile(filenameForItems)); 
                 }
                 
@@ -149,8 +145,12 @@ public class Orders {
                             throw new Exception(I18n.wrongFormatOfFile(filenameForItems) + I18n.itemNotFound(elements[1]));
                         }
                         boolean signPicking = false;
-                        if(Integer.parseInt(elements[5]) == 1){
+                        int restackingFlag = Integer.parseInt(elements[5]);
+                        if(restackingFlag == 1) {
                             signPicking = true;
+                        }
+                        else if (restackingFlag != 0) {
+                            throw new Exception(I18n.wrongFormatOfFile(filenameForItems) + I18n.wrongFlag(elements[5]));
                         }
                         OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),(int)Math.ceil(Double.parseDouble(elements[2].replaceAll(",", "."))),(int)Math.ceil(Double.parseDouble(elements[4].replaceAll(",", "."))),signPicking);
                         v.add(oi);
