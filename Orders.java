@@ -45,7 +45,9 @@ public class Orders {
                 lineCounter++;
                 String[] elements = line.split(";");
                 //indexForShop,-,time,expedition
-                if (elements.length < 4) {
+                if (elements.length == 0) {
+                    break;
+                } else if (elements.length < 4) {
                     throw new Exception(I18n.wrongFormatOfFile(fileForShop)); 
                 }
                 DateFormat formatter = new SimpleDateFormat("HH:mm");
@@ -126,7 +128,9 @@ public class Orders {
                 String[] elements = line.split(";");
                 //indexForShop,indexForGoods,pieces,volume,boxes,flag
                 
-                if (elements.length < 6) {
+                if (elements.length == 0) {
+                    break;
+                } else if (elements.length < 6) {
                     throw new Exception(I18n.wrongFormatOfFile(filenameForItems)); 
                 }
                 
