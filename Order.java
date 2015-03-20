@@ -76,7 +76,7 @@ public class Order implements Comparable<Order>{
 		items.clear();
 	};
 	
-	public void divideOrderToTasks() {
+	public void divideOrderToTasks() throws Exception{
 		Vector <OrderItem> oi = new Vector<OrderItem> (items);
 		double volumeOfAllGoodsInContainer = 0;
 		double volumeOfAllGoodsInLastTask = 0;
@@ -141,6 +141,9 @@ public class Order implements Comparable<Order>{
 	            }
 		        if(t.getItem(t.getSize()-1).getVolume() == 0){
 		        	t.deleteItem(t.getSize()-1);
+		        }
+		        if (t.getItems().size() == 0){
+					throw new Exception(I18n.cantPlaceItem(this.indexOfShop,oi.get(j).getIndexOfItem()));
 		        }
 		        if (deliverySide == Expedition.North) {
                     t.setFinish(Warehouse.getInstance().getNearestNorthDelivery(t.getItem(t.getSize()-1).getIndex()));//get finish point
