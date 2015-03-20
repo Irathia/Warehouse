@@ -74,4 +74,8 @@ public class I18n {
     public static String repeatItem(String cellName) {
         return "Повторное определение товара, находящегося в ячейке \"" + cellName + "\"" + ". ";
     }
+    
+    public static String cantPlaceItem(long indexOfShop, long indexOfItem){
+    	return "Невозможно положить товар \"" + indexOfItem + "\" в тележку для магазина \"" + indexOfShop + "\"" + ". " + "Попробуйте поменять флаг отборки товара.";
+    }
 }

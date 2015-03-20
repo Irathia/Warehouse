@@ -156,7 +156,7 @@ public class Orders {
                         else if (restackingFlag != 0) {
                             throw new Exception(I18n.wrongFormatOfFile(filenameForItems) + I18n.wrongFlag(elements[5]));
                         }
-                        OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),(int)Math.ceil(Double.parseDouble(elements[2].replaceAll(",", "."))),(int)Math.ceil(Double.parseDouble(elements[4].replaceAll(",", "."))),signPicking);
+                        OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getIndex(),items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),(int)Math.ceil(Double.parseDouble(elements[2].replaceAll(",", "."))),(int)Math.ceil(Double.parseDouble(elements[4].replaceAll(",", "."))),signPicking);
                         v.add(oi);
                     }
                     else {
@@ -176,7 +176,7 @@ public class Orders {
                         else if (restackingFlag != 0) {
                             throw new Exception(I18n.wrongFormatOfFile(filenameForItems) + I18n.wrongFlag(elements[5]));
                         }
-                        OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),(int)Math.ceil(Double.parseDouble(elements[2].replaceAll(",", "."))),(int)Math.ceil(Double.parseDouble(elements[4].replaceAll(",", "."))),signPicking);
+                        OrderItem oi = new OrderItem(indexOfShelf,items.getItem(indexOfShelf).getIndex(),items.getItem(indexOfShelf).getRigidity(),Double.parseDouble(elements[3].replace(',','.')),(int)Math.ceil(Double.parseDouble(elements[2].replaceAll(",", "."))),(int)Math.ceil(Double.parseDouble(elements[4].replaceAll(",", "."))),signPicking);
                         v.add(oi);
                     }
                 } catch (Exception ex) {
@@ -221,7 +221,7 @@ public class Orders {
     	return counter;
     }
 
-	public void divideOrdersToTasks(){
+	public void divideOrdersToTasks() throws Exception {
 	    for (int i = 0; i < orders.size(); i++){
 			orders.get(i).divideOrderToTasks();
 			Vector <Task> t = orders.get(i).getTasks();

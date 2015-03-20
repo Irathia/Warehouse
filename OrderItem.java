@@ -3,6 +3,7 @@ package Warehouse;
 public class OrderItem implements Comparable<OrderItem>{
 	
 	private  int index;//index of shelf
+	private long indexOfItem;
 	private  int rigidity;
 	private  double volume;
 	private double AllVolume;
@@ -13,8 +14,9 @@ public class OrderItem implements Comparable<OrderItem>{
 	OrderItem(){
 	};
 
-	OrderItem(int index, int rigidity, double volume, int pieces,int boxes, boolean signPicking){
+	OrderItem(int index, long indexOfItem, int rigidity, double volume, int pieces,int boxes, boolean signPicking){
 		this.index = index;
+		this.indexOfItem = indexOfItem;
 		this.rigidity = rigidity;
 		this.volume = volume;
         this.pieces = pieces;
@@ -25,6 +27,7 @@ public class OrderItem implements Comparable<OrderItem>{
 	
 	OrderItem(OrderItem item){
 		this.index = item.index;
+		this.indexOfItem = item.indexOfItem;
 		this.rigidity = item.rigidity;
 		this.volume = item.volume;
         this.pieces = item.pieces;
@@ -70,6 +73,8 @@ public class OrderItem implements Comparable<OrderItem>{
     public final boolean getSignPicking() {return signPicking; }
     
     public final double getAllVolume() {return AllVolume; }
+    
+    public final long getIndexOfItem() {return indexOfItem;}
 
     public void setIndex(int index){
         this.index = index;
