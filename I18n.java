@@ -74,4 +74,8 @@ public class I18n {
     public static String repeatItem(String cellName) {
         return "Повторное определение товара, находящегося в ячейке \"" + cellName + "\"" + ". ";
     }
+    
+    public static String repeatCell(String cellName,  String filename) {
+        return "Повторное использование названия ячейки \"" + cellName + "\" в файле " + filename + ". ";
+    }
 }

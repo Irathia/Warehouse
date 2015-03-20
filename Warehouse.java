@@ -373,6 +373,10 @@ public class Warehouse extends InputParameters{
                         if (tmpPoint.getIndex() != j + rowShift) {
                             throw new Exception(I18n.wrongPartsOfCell(tmpPoint.getIndex(), j + rowShift, elements[i], filename));
                         }
+                        int copy = pathways.getShelfIndexByFullName(elements[i]);
+                        if (copy != -1) {
+                            throw new Exception(I18n.repeatCell(elements[i], filename) + I18n.wrongCell(lineCounter, i+1, filename));
+                        }
                         pathways.duplicatePickupPointOfShelf(tmpPoint, tmpPoint.getIndex(), elements[i]);
                         i++;
                         continue;
@@ -393,6 +397,10 @@ public class Warehouse extends InputParameters{
                     else {
                         if (tmpPoint.getIndex() != j + rowShift) {
                             throw new Exception(I18n.wrongPartsOfCell(tmpPoint.getIndex(), j + rowShift, elements[i], filename));
+                        }
+                        int copy = pathways.getShelfIndexByFullName(elements[i]);
+                        if (copy != -1) {
+                            throw new Exception(I18n.repeatCell(elements[i], filename) + I18n.wrongCell(lineCounter, i+1, filename));
                         }
                         pathways.duplicatePickupPointOfShelf(tmpPoint, tmpPoint.getIndex(), elements[i]);
                     }
