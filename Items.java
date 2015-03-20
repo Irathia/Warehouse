@@ -49,6 +49,10 @@ public class Items {
                     items.add(it);
                 }
                 else {
+                    if (items.get(index).getIndex() != 0) {
+                        String cellName = Warehouse.getInstance().getNameByIndex(index);
+                        throw new Exception(I18n.errorLine(lineCounter, filename) + I18n.repeatItem(cellName));
+                    }
                     items.set(index, it);
                 }
             }

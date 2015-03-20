@@ -70,4 +70,8 @@ public class I18n {
     public static String wrongFlag(String flagName) {
         return "Неверный входной параметр \"" + flagName + "\"" + ". ";
     }
+    
+    public static String repeatItem(String cellName) {
+        return "Повторное определение товара, находящегося в ячейке \"" + cellName + "\"" + ". ";
+    }
 }
