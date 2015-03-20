@@ -80,6 +80,6 @@ public class I18n {
     }
     
     public static String cantPlaceItem(long indexOfShop, long indexOfItem){
-    	return "Невозможно положить товар \"" + indexOfItem + "\" в тележку для магазина \"" + indexOfShop + "\"" + ". " + "Попробуйте поменять флаг отборки товара.";
+    	return "Невозможно положить товар \"" + indexOfItem + "\" в тележку при отборке заказа для магазина \"" + indexOfShop + "\"" + ". " + "Попробуйте поменять флаг отборки товара.";
     }
 }
