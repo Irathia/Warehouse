@@ -136,6 +136,9 @@ public class Orders {
                 
                 try {
                     if (currentShop != Long.parseLong(elements[0]) && currentShop != 0L){
+                    	if (this.getOrderByShop(currentShop) == null){
+                    		throw new Exception(I18n.shopNotFound(fileForShop,currentShop));
+                    	}
                         this.getOrderByShop(currentShop).setItems(v);
                         
                         v.clear();

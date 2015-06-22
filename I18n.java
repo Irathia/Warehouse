@@ -34,6 +34,10 @@ public class I18n {
         return "Не удалось найти товар c кодом \"" + name + "\". Добавьте товар с данным кодом в файл Items.csv или исправьте код товара. ";
     }
     
+    public static String shopNotFound(String file, long numberOfShop){
+    	return "Не удалось найти магазин с номером \"" + numberOfShop + "\" в файле " + file + ".";
+    }
+    
     public static String errorLine(int lineNumber, String filename) {
         return "Исправьте строку " + lineNumber + " в файле " + filename + ". ";
     }
