@@ -352,12 +352,8 @@ public class Warehouse extends InputParameters{
             }
         }
         
-        while (maxNumberOfShelfsInRow > 0) {
-            line = br.readLine();
+        while ((line = br.readLine()) != null) {
             lineCounter++;
-            if (line == null) {
-                throw new Exception(I18n.wrongFormatOfFile(filename));
-            }
             elements = line.split(";");
             i = 1;
             for (int j = 0; j < numberOfRows; j++) {
@@ -413,6 +409,11 @@ public class Warehouse extends InputParameters{
                 if (maxNumberOfShelfsInRow < numberOfShelfsInRow[i]) {
                     maxNumberOfShelfsInRow = numberOfShelfsInRow[i];
                 }
+            }
+        }
+        for (i = 0; i < numberOfRows; i++) {
+            if (numberOfShelfsInRow[i] != 0) {
+                throw new Exception(I18n.wrongNumberOfShelfs(i + 1, filename));
             }
         }
     }
